@@ -4,18 +4,15 @@
 namespace AudioBookPlayer.Core.Services.ExplorerService
 {
 	/// <summary>
-	/// File system explorer service.
+	/// File system explorer service interface.
 	/// </summary>
-	public class ExplorerService : IExplorerService
+	public interface IExplorerService
 	{
 		/// <summary>
 		/// Returns folder explorer item.
 		/// </summary>
 		/// <param name="folderPath">Folder path.</param>
 		/// <returns>Folder item.</returns>
-		public FolderItem LoadFolder(string folderPath)
-		{
-			return new FolderItem(folderPath);
-		}
+		FolderItem LoadFolder(string folderPath);
 	}
 }

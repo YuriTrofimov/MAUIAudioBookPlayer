@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:viewmodel="clr-namespace:MauiAudioBookPlayer.ViewModel"
+             x:Class="MauiAudioBookPlayer.Pages.ManageScanFolders"
+             Title="ManageScanFolders">
+    <VerticalStackLayout>
+        <Entry Text="{Binding FolderPath}"/>
+        <Button Text="AddFolder" Command="{Binding AddCommand}"/>
+        <Button Text="Delete selected" Command="{Binding DeleteSelectedCommand}"/>
+        <CollectionView 
+                    ItemsSource="{Binding Folders}"
+                    SelectionMode="Single">
+            <CollectionView.ItemTemplate>
+                <DataTemplate>
+                    <SwipeView>
+                        <SwipeView.LeftItems>
+                            <SwipeItems Mode="Reveal">
+                                <SwipeItem 
+                                Text="Delete" 
+                                BackgroundColor="Red"
+                                Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodel:ScanFolderViewModel}}, Path=DeleteCommand}"
+                                CommandParameter="{Binding Path}"/>
+                            </SwipeItems>
+                        </SwipeView.LeftItems>
+                        <Grid HeightRequest="60"
+                              WidthRequest="300"
+                              BackgroundColor="LightGray">
+                            <Label Text="{Binding Path}"/>
+                        </Grid>
+                    </SwipeView>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+    </VerticalStackLayout>
+</ContentPage>

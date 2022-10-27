@@ -12,7 +12,7 @@ namespace AudioBookPlayer.Core.Model
 	/// <summary>
 	/// Core data repository.
 	/// </summary>
-	public class AppDataRepository
+	public class AppDataRepository : IAppDataRepository
 	{
 		private readonly string dbFilePath;
 		private SQLiteAsyncConnection? connection;

@@ -18,7 +18,7 @@ namespace AudioBookPlayer.Core.Services.BookScanService
 	/// (2) /ScanFolder/../BookName(non numeric)/01(numeric)/file.mp3
 	/// (3) /ScanFolder/file.mp3 -- Single file book.
 	/// </remarks>
-	public class BookScanService
+	public class BookScanService : IBookScanService
 	{
 		/// <summary>
 		/// Search books in provided scan folders.
