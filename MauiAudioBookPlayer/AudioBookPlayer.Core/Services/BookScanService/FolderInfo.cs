@@ -4,6 +4,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using AudioBookPlayer.Core.Common;
 
 namespace AudioBookPlayer.Core.Services.BookScanService
 {
@@ -128,11 +129,11 @@ namespace AudioBookPlayer.Core.Services.BookScanService
 		/// <param name="parent">Parent folder.</param>
 		private void SearchSubFolders(string path, FolderInfo parent)
 		{
-			BookScanService.AudioFiles
+			Constants.AudioFiles
 				.ToList()
 				.ForEach(e => AudioFiles.AddRange(Directory.GetFiles(path, $"*{e}", SearchOption.TopDirectoryOnly)));
 
-			BookScanService.ImageFiles
+			Constants.ImageFiles
 				.ToList()
 				.ForEach(e => ImageFiles.AddRange(Directory.GetFiles(path, $"*{e}", SearchOption.TopDirectoryOnly)));
 

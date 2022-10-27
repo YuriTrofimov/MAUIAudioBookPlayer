@@ -4,6 +4,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using AudioBookPlayer.Core.Common;
 using AudioBookPlayer.Core.Model.Entities;
 
 namespace AudioBookPlayer.Core.Services.BookScanService
@@ -19,16 +20,6 @@ namespace AudioBookPlayer.Core.Services.BookScanService
 	/// </remarks>
 	public class BookScanService
 	{
-		/// <summary>
-		/// Supported audio file extensions.
-		/// </summary>
-		public static readonly string[] AudioFiles = new[] { ".mp3" };
-
-		/// <summary>
-		/// Supported image file extensions.
-		/// </summary>
-		public static readonly string[] ImageFiles = new[] { ".jpg", ".jpeg", ".png" };
-
 		/// <summary>
 		/// Search books in provided scan folders.
 		/// </summary>
@@ -220,7 +211,7 @@ namespace AudioBookPlayer.Core.Services.BookScanService
 		private string? TryGetCoverImageFromAudio(string path)
 		{
 			var folder = Path.GetDirectoryName(path);
-			foreach (var extension in ImageFiles)
+			foreach (var extension in Constants.ImageFiles)
 			{
 				var filePath = Path.Combine(folder, $"fileName{extension}");
 				if (File.Exists(filePath))
