@@ -21,12 +21,6 @@ namespace MauiAudioBookPlayer.ViewModel
 		[ObservableProperty]
 		private ObservableCollection<ScanFolder> folders;
 
-		[ObservableProperty]
-		private ObservableCollection<ScanFolder> selectedFolders;
-
-		[ObservableProperty]
-		private string folderPath;
-
 		/// <summary>
 		/// Initializes a new instance of the <see cref="ScanFolderViewModel"/> class.
 		/// </summary>
@@ -34,16 +28,8 @@ namespace MauiAudioBookPlayer.ViewModel
 		{
 			repository = Ioc.Default.GetService<IAppDataRepository>();
 			folders = new ObservableCollection<ScanFolder>();
-			selectedFolders = new ObservableCollection<ScanFolder>();
 			initialized = false;
-			ExplorerViewModel = new ExplorerViewModel();
-			ExplorerViewModel.OnPathConfirmed += ExplorerViewModel_OnPathConfirmed;
 		}
-
-		/// <summary>
-		/// Gets file system explorer ViewModel.
-		/// </summary>
-		public ExplorerViewModel ExplorerViewModel { get; private set; }
 
 		/// <summary>
 		/// ViewModel initialization. Can be called only once.
@@ -68,14 +54,9 @@ namespace MauiAudioBookPlayer.ViewModel
 		}
 
 		[RelayCommand]
-		private async Task Add()
+		private async Task Add(string path)
 		{
-			if (string.IsNullOrWhiteSpace(FolderPath))
-			{
-				return;
-			}
-
-			await AddNewScanFolder(FolderPath);
+			await AddNewScanFolder(path);
 		}
 
 		private async Task AddNewScanFolder(string path)
@@ -92,36 +73,19 @@ namespace MauiAudioBookPlayer.ViewModel
 			}
 
 			await repository.AddScanFolderAsync(path);
-			FolderPath = null;
-			await ReloadFoldersAsync();
-		}
-
-		[RelayCommand]
-		private async Task DeleteSelected()
-		{
-			if (SelectedFolders.Count == 0)
-			{
-				return;
-			}
-
-			foreach (var folder in SelectedFolders)
-			{
-				await repository.RemoveScanFolderAsync(folder.Path);
-			}
-
 			await ReloadFoldersAsync();
 		}
 
 		[RelayCommand]
 		private async Task Delete(string path)
 		{
+			if (string.IsNullOrEmpty(path))
+			{
+				return;
+			}
+
 			await repository.RemoveScanFolderAsync(path);
 			await ReloadFoldersAsync();
-		}
-
-		private async void ExplorerViewModel_OnPathConfirmed(object sender, EventArgs e)
-		{
-			await AddNewScanFolder(ExplorerViewModel.CurrentPath);
 		}
 	}
 }

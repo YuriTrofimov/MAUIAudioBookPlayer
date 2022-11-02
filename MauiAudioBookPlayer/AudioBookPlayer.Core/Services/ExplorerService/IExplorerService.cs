@@ -1,6 +1,8 @@
 ﻿// Copyright (c) 2022 Yuri Trofimov.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
+using System.Collections.Generic;
+
 namespace AudioBookPlayer.Core.Services.ExplorerService
 {
 	/// <summary>
@@ -9,10 +11,10 @@ namespace AudioBookPlayer.Core.Services.ExplorerService
 	public interface IExplorerService
 	{
 		/// <summary>
-		/// Returns folder explorer item.
+		/// Returns folder children items.
 		/// </summary>
 		/// <param name="folderPath">Folder path.</param>
-		/// <returns>Folder item.</returns>
-		FolderItem LoadFolder(string folderPath);
+		/// <returns>Folder children items.</returns>
+		List<ExplorerItem> LoadDirectoryItems(string folderPath);
 	}
 }

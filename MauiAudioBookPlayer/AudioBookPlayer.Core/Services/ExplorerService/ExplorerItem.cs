@@ -21,11 +21,11 @@ namespace AudioBookPlayer.Core.Services.ExplorerService
 		/// <summary>
 		/// Gets or sets item path.
 		/// </summary>
-		public string Path { get; protected set; }
+		public string Path { get; set; }
 
 		/// <summary>
 		/// Gets or sets item name.
 		/// </summary>
-		public string Name { get; protected set; }
+		public string Name { get; set; }
 	}
 }

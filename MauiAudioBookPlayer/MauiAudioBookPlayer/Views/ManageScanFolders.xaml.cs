@@ -1,8 +1,10 @@
 // Copyright (c) 2022 Yuri Trofimov.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
+using CommunityToolkit.Maui.Views;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using MauiAudioBookPlayer.ViewModel;
+using MauiAudioBookPlayer.Views;
 
 namespace MauiAudioBookPlayer.Pages;
 
@@ -35,5 +37,11 @@ public partial class ManageScanFolders : ContentPage
 		}
 
 		await viewModel.Initialize();
+	}
+
+	private async void SelectFolder_Clicked(object sender, EventArgs e)
+	{
+		var result = await this.ShowPopupAsync(new SelectFolderPage()) as string;
+		await viewModel.AddCommand.ExecuteAsync(result);
 	}
 }

@@ -4,20 +4,28 @@
 using AudioBookPlayer.Core.Model;
 using AudioBookPlayer.Core.Services.BookScanService;
 using AudioBookPlayer.Core.Services.ExplorerService;
-using CommunityToolkit.Mvvm.DependencyInjection;
+using CommunityToolkit.Maui;
 using MauiAudioBookPlayer.Extensions;
 using MauiAudioBookPlayer.Services;
 using MauiAudioBookPlayer.ViewModel;
 
 namespace MauiAudioBookPlayer;
 
+/// <summary>
+/// Maui Application.
+/// </summary>
 public static class MauiProgram
 {
+	/// <summary>
+	/// Application initialization.
+	/// </summary>
+	/// <returns>MauiApp.</returns>
 	public static MauiApp CreateMauiApp()
 	{
 		var builder = MauiApp.CreateBuilder();
 		builder
 			.UseMauiApp<App>()
+			.UseMauiCommunityToolkit()
 			.ConfigureFonts(fonts =>
 			{
 				fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");
@@ -37,9 +45,15 @@ public static class MauiProgram
 	{
 		var dbPath = "data.db3".ToLocalFilePath();
 		builder.Services.AddSingleton<IAppDataRepository>(new AppDataRepository(dbPath));
-		builder.Services.AddSingleton<IExplorerService, ExplorerService>();
+
+#if WINDOWS
+		builder.Services.AddSingleton<IExplorerService, MauiAudioBookPlayer.Platforms.Windows.WindowsExplorerService>();
+#elif ANDROID
+		builder.Services.AddSingleton<IExplorerService, MauiAudioBookPlayer.Platforms.Android.AndroidExplorerService>();
+#endif
 		builder.Services.AddSingleton<IBookScanService, BookScanService>();
 		builder.Services.AddTransient<ScanFolderViewModel>();
+		builder.Services.AddTransient<ExplorerViewModel>();
 
 		builder.Services.AddSingleton<IMauiInitializeService>(new IocConfigurationService());
 		return builder;

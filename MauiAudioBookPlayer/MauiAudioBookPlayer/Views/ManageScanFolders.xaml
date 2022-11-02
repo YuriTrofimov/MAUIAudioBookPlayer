@@ -5,9 +5,7 @@
              x:Class="MauiAudioBookPlayer.Pages.ManageScanFolders"
              Title="ManageScanFolders">
     <VerticalStackLayout>
-        <Entry Text="{Binding FolderPath}"/>
-        <Button Text="AddFolder" Command="{Binding AddCommand}"/>
-        <Button Text="Delete selected" Command="{Binding DeleteSelectedCommand}"/>
+        <Button Text="SelectFolder" Clicked="SelectFolder_Clicked"/>
         <CollectionView 
                     ItemsSource="{Binding Folders}"
                     SelectionMode="Single">

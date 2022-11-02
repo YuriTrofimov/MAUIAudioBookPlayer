@@ -14,31 +14,26 @@ namespace AudioBookPlayer.Core.Services.ExplorerService
 		/// <summary>
 		/// Initializes a new instance of the <see cref="FolderItem"/> class.
 		/// </summary>
-		/// <param name="path">Folder path.</param>
-		public FolderItem(string path)
-			: base(path)
+		public FolderItem()
+			: base(string.Empty)
 		{
-			Name = new DirectoryInfo(path).Name;
 		}
 
 		/// <summary>
-		/// Get current item children.
+		/// Initializes a new instance of the <see cref="FolderItem"/> class.
 		/// </summary>
-		/// <returns>List of current item children.</returns>
-		public List<ExplorerItem> GetChildren()
+		/// <param name="path">Folder path.</param>
+		/// <param name="parentPath">Folder parent path.</param>
+		public FolderItem(string path, string parentPath)
+			: base(path)
 		{
-			var result = new List<ExplorerItem>();
-			foreach (var dir in Directory.GetDirectories(Path))
-			{
-				result.Add(new FolderItem(dir));
-			}
-
-			foreach (var file in Directory.GetFiles(Path))
-			{
-				result.Add(new FileItem(file));
-			}
-
-			return result;
+			Name = new DirectoryInfo(path).Name;
+			ParentPath = parentPath;
 		}
+
+		/// <summary>
+		/// Gets or sets path to parent directory.
+		/// </summary>
+		public string? ParentPath { get; set; }
 	}
 }
