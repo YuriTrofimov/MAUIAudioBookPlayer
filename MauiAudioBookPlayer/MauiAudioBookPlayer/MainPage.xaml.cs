@@ -1,4 +1,6 @@
-﻿namespace MauiAudioBookPlayer;
+﻿using MauiAudioBookPlayer.Model;
+
+namespace MauiAudioBookPlayer;
 
 public partial class MainPage : ContentPage
 {
@@ -11,7 +13,7 @@ public partial class MainPage : ContentPage
 
 	private async void OnCounterClicked(object sender, EventArgs e)
 	{
-		await Shell.Current.GoToAsync("ManageScanFolders");
+		await Shell.Current.GoToAsync("ManageScanFolders", true);
 		return;
 		//count++;
 

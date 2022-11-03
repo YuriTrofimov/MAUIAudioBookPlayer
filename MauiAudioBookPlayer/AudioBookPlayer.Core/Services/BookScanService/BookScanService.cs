@@ -75,7 +75,7 @@ namespace AudioBookPlayer.Core.Services.BookScanService
 					{
 						Caption = leave.Name,
 						FolderPath = leave.Path,
-						CoverImagePath = leave.ImageFiles.FirstOrDefault(),
+						CoverImagePath = SelectCoverImageFile(leave.ImageFiles),
 					};
 					foreach (var file in leave.AudioFiles.OrderBy(a => a))
 					{
@@ -123,7 +123,7 @@ namespace AudioBookPlayer.Core.Services.BookScanService
 				{
 					Caption = folder.Name,
 					FolderPath = folder.Path,
-					CoverImagePath = folder.ImageFiles.FirstOrDefault(),
+					CoverImagePath = SelectCoverImageFile(folder.ImageFiles),
 				};
 				processedFolders.Add(folder.Path);
 
@@ -201,6 +201,22 @@ namespace AudioBookPlayer.Core.Services.BookScanService
 			}
 
 			return result;
+		}
+
+		/// <summary>
+		/// Try to find image file with specific name.
+		/// </summary>
+		/// <param name="imageFiles">Image files list.</param>
+		/// <returns>Best possible image file.</returns>
+		private string? SelectCoverImageFile(IEnumerable<string> imageFiles)
+		{
+			var cover = imageFiles.FirstOrDefault(a => a.ToLower().Contains("cover"));
+			if (cover == null)
+			{
+				cover = imageFiles.FirstOrDefault();
+			}
+
+			return cover;
 		}
 
 		/// <summary>

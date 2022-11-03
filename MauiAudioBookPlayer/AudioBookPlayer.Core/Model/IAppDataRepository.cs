@@ -36,5 +36,39 @@ namespace AudioBookPlayer.Core.Model
 		/// </summary>
 		/// <returns>Scan folder records.</returns>
 		Task<List<ScanFolder>> GetAllScanFoldersAsync();
+
+		/// <summary>
+		/// Add new book to database.
+		/// If book with current folder path exists - it will be replaced.
+		/// </summary>
+		/// <param name="book">New book.</param>
+		/// <returns>async Task.</returns>
+		Task AddBookAsync(Book book);
+
+		/// <summary>
+		/// Remove book record.
+		/// </summary>
+		/// <param name="book">Book to delete.</param>
+		/// <returns>async Task.</returns>
+		Task RemoveBookAsync(Book book);
+
+		/// <summary>
+		/// Get all books.
+		/// </summary>
+		/// <returns>Books records.</returns>
+		Task<List<Book>> GetAllBooksAsync();
+
+		/// <summary>
+		/// Delete all books.
+		/// </summary>
+		/// <returns>Async task.</returns>
+		Task DeleteAllBooksAsync();
+
+		/// <summary>
+		/// Get all book files.
+		/// </summary>
+		/// <param name="book">Book.</param>
+		/// <returns>Book files records.</returns>
+		Task<List<BookFile>> GetAllBookFilesAsync(Book book);
 	}
 }

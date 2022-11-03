@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:local="clr-namespace:MauiAudioBookPlayer.ViewModel"
+             xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+             x:Class="MauiAudioBookPlayer.Views.LibraryPage"
+             IsBusy="{Binding Loading}"
+             Title="Library">
+    <ContentPage.BindingContext>
+        <local:BookListViewModel />
+    </ContentPage.BindingContext>
+    <ScrollView Padding="5">
+        <StackLayout>
+            <CollectionView x:Name="BookList"
+                SelectionMode="Single" 
+                SelectedItem="{Binding SelectedBook, Mode=TwoWay}" 
+                SelectionChanged="BookList_SelectionChanged"
+                ItemsSource="{Binding Books}">
+                <CollectionView.Resources>
+                    <ResourceDictionary>
+                        <toolkit:IsStringNullOrEmptyConverter x:Key="ConvertStringNull" />
+                        <toolkit:IsStringNotNullOrEmptyConverter x:Key="ConvertStringNotNull" />
+                    </ResourceDictionary>
+                </CollectionView.Resources>
+                <CollectionView.ItemTemplate>
+                    <DataTemplate>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="100" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <Image Margin="5"
+                                   Source="{Binding CoverImagePath}"
+                                    IsVisible="{Binding CoverImagePath, Converter={StaticResource ConvertStringNotNull}}" />
+                            <Image Margin="5" Source="Resources/Images/icon_book_cover.png" 
+                                   IsVisible="{Binding CoverImagePath, Converter={StaticResource ConvertStringNull}}" />
+                            <Label Margin="5" Text="{Binding Caption}" Grid.Column="1" />
+                        </Grid>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+        </StackLayout>
+    </ScrollView>
+</ContentPage>

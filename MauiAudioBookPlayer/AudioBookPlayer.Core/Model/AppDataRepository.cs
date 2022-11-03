@@ -107,6 +107,155 @@ namespace AudioBookPlayer.Core.Model
 			return new List<ScanFolder>();
 		}
 
+		/// <summary>
+		/// Add new book to database.
+		/// If book with current folder path exists - it will be replaced.
+		/// </summary>
+		/// <param name="book">New book.</param>
+		/// <returns>async Task.</returns>
+		public async Task AddBookAsync(Book book)
+		{
+			try
+			{
+				if (string.IsNullOrWhiteSpace(book.Caption))
+				{
+					Error = "Incorrect book caption";
+					return;
+				}
+
+				if (string.IsNullOrWhiteSpace(book.FolderPath))
+				{
+					Error = "Incorrect book FolderPath";
+					return;
+				}
+
+				await InitAsync();
+				if (connection != null)
+				{
+					await connection.Table<Book>()
+						.DeleteAsync(a => a.FolderPath == book.FolderPath);
+
+					await connection.InsertOrReplaceAsync(book);
+
+					if (!book.ID.HasValue)
+					{
+						return;
+					}
+
+					await connection.Table<BookFile>().DeleteAsync(a => a.BookID == book.ID.Value);
+
+					foreach (var file in book.Files)
+					{
+						file.BookID = book.ID.Value;
+						await connection.InsertOrReplaceAsync(file);
+					}
+				}
+			}
+			catch (Exception ex)
+			{
+				Error = ex.Message;
+			}
+		}
+
+		/// <summary>
+		/// Remove book record.
+		/// </summary>
+		/// <param name="book">Book to delete.</param>
+		/// <returns>async Task.</returns>
+		public async Task RemoveBookAsync(Book book)
+		{
+			try
+			{
+				if (string.IsNullOrWhiteSpace(book?.FolderPath))
+				{
+					Error = "Incorrect book FolderPath";
+					return;
+				}
+
+				await InitAsync();
+				if (connection != null)
+				{
+					await connection.Table<Book>().DeleteAsync(x => x.ID == book.ID);
+				}
+			}
+			catch (Exception ex)
+			{
+				Error = ex.Message;
+			}
+		}
+
+		/// <summary>
+		/// Get all books.
+		/// </summary>
+		/// <returns>Books records.</returns>
+		public async Task<List<Book>> GetAllBooksAsync()
+		{
+			try
+			{
+				await InitAsync();
+				if (connection != null)
+				{
+					return await connection.Table<Book>().ToListAsync();
+				}
+			}
+			catch (Exception ex)
+			{
+				Error = ex.Message;
+			}
+
+			return new List<Book>();
+		}
+
+		/// <summary>
+		/// Delete all books.
+		/// </summary>
+		/// <returns>Async task.</returns>
+		public async Task DeleteAllBooksAsync()
+		{
+			try
+			{
+				await InitAsync();
+				if (connection != null)
+				{
+					await connection.DeleteAllAsync<Book>();
+				}
+			}
+			catch (Exception ex)
+			{
+				Error = ex.Message;
+			}
+		}
+
+		/// <summary>
+		/// Get all book files.
+		/// </summary>
+		/// <param name="book">Book.</param>
+		/// <returns>Book files records.</returns>
+		public async Task<List<BookFile>> GetAllBookFilesAsync(Book book)
+		{
+			try
+			{
+				if (book == null)
+				{
+					return new List<BookFile>();
+				}
+
+				await InitAsync();
+				if (connection != null)
+				{
+					return await connection.Table<BookFile>()
+						.Where(a => a.BookID == book.ID).
+						ToListAsync();
+				}
+			}
+			catch (Exception ex)
+			{
+				Error = ex.Message;
+			}
+
+			return new List<BookFile>();
+		}
+
 		private async Task InitAsync()
 		{
 			if (connection != null)
@@ -115,7 +264,10 @@ namespace AudioBookPlayer.Core.Model
 			}
 
 			connection = new SQLiteAsyncConnection(dbFilePath);
+			await connection.ExecuteAsync("PRAGMA foreignkeys = ON");
 			await connection.CreateTableAsync<ScanFolder>();
+			await connection.CreateTableAsync<Book>();
+			await connection.CreateTableAsync<BookFile>();
 		}
 	}
 }

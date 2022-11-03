@@ -4,7 +4,7 @@
              xmlns:views="clr-namespace:MauiAudioBookPlayer.Views"
              x:Class="MauiAudioBookPlayer.MainPage">
 
-    <ScrollView>
+    <ScrollView Margin="20">
         <VerticalStackLayout
             Spacing="25"
             Padding="30,0"

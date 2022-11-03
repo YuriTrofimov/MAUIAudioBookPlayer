@@ -1,17 +1,16 @@
 // Copyright (c) 2022 Yuri Trofimov.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
-using CommunityToolkit.Maui.Views;
 using CommunityToolkit.Mvvm.DependencyInjection;
+using MauiAudioBookPlayer.Extensions;
 using MauiAudioBookPlayer.ViewModel;
-using MauiAudioBookPlayer.Views;
 
-namespace MauiAudioBookPlayer.Pages;
+namespace MauiAudioBookPlayer.Views;
 
 /// <summary>
 /// Manage scan folders page.
 /// </summary>
-public partial class ManageScanFolders : ContentPage
+public partial class ManageScanFolders : ContentPage, IQueryAttributable
 {
 	private readonly ScanFolderViewModel viewModel;
 
@@ -39,9 +38,21 @@ public partial class ManageScanFolders : ContentPage
 		await viewModel.Initialize();
 	}
 
+	/// <summary>
+	/// IQueryAttributable interface method.
+	/// </summary>
+	/// <param name="query">Query parameters dictionary.</param>
+	public void ApplyQueryAttributes(IDictionary<string, object> query)
+	{
+		var navParams = query.AsNavParams();
+		if (!string.IsNullOrEmpty(navParams.SelectedFolder))
+		{
+			viewModel.AddCommand.Execute(navParams.SelectedFolder);
+		}
+	}
+
 	private async void SelectFolder_Clicked(object sender, EventArgs e)
 	{
-		var result = await this.ShowPopupAsync(new SelectFolderPage()) as string;
-		await viewModel.AddCommand.ExecuteAsync(result);
+		await Shell.Current.GoToAsync("explorer", true);
 	}
 }

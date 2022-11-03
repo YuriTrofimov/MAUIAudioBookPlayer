@@ -3,11 +3,14 @@
 
 using Android;
 using Android.App;
+using Android.Content;
 using Android.Content.PM;
 using Android.OS;
 using Android.Widget;
 using AndroidX.Core.App;
 using AndroidX.Core.Content;
+using MauiAudio.Platforms.Android;
+using MauiAudio.Platforms.Android.CurrentActivity;
 
 namespace MauiAudioBookPlayer;
 
@@ -15,14 +18,25 @@ namespace MauiAudioBookPlayer;
 /// Main android version app activity.
 /// </summary>
 [Activity(Theme = "@style/Maui.SplashTheme", MainLauncher = true, ConfigurationChanges = ConfigChanges.ScreenSize | ConfigChanges.Orientation | ConfigChanges.UiMode | ConfigChanges.ScreenLayout | ConfigChanges.SmallestScreenSize | ConfigChanges.Density)]
-public class MainActivity : MauiAppCompatActivity
+public class MainActivity : MauiAppCompatActivity, IAudioActivity
 {
 	private static MainActivity instance;
+	private MediaPlayerServiceConnection mediaPlayerServiceConnection;
 
 	/// <summary>
 	/// Gets main activity instance.
 	/// </summary>
 	public static MainActivity Instance => instance;
+
+	public MediaPlayerServiceBinder Binder { get; set; }
+
+	public event StatusChangedEventHandler StatusChanged;
+
+	public event CoverReloadedEventHandler CoverReloaded;
+
+	public event PlayingEventHandler Playing;
+
+	public event BufferingEventHandler Buffering;
 
 	/// <summary>
 	/// Called when the activity is first created.
@@ -41,6 +55,13 @@ public class MainActivity : MauiAppCompatActivity
 		if (IsPermissionRequired())
 		{
 			RequestPermissions();
+		}
+
+		CrossCurrentActivity.Current.Init(this, savedInstanceState);
+		NotificationHelper.CreateNotificationChannel(ApplicationContext);
+		if (mediaPlayerServiceConnection == null)
+		{
+			InitializeMedia();
 		}
 	}
 
@@ -99,5 +120,12 @@ public class MainActivity : MauiAppCompatActivity
 		}
 
 		ActivityCompat.RequestPermissions(this, new[] { Manifest.Permission.WriteExternalStorage }, 100);
+	}
+
+	private void InitializeMedia()
+	{
+		mediaPlayerServiceConnection = new MediaPlayerServiceConnection(this);
+		var mediaPlayerServiceIntent = new Intent(ApplicationContext, typeof(MediaPlayerService));
+		BindService(mediaPlayerServiceIntent, mediaPlayerServiceConnection, Bind.AutoCreate);
 	}
 }

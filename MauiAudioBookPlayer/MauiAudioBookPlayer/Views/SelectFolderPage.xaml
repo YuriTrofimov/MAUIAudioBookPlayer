@@ -1,44 +1,44 @@
 <?xml version="1.0" encoding="utf-8" ?>
-<toolkit:Popup xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
              xmlns:viewmodel="clr-namespace:MauiAudioBookPlayer.ViewModel"
-             x:Class="MauiAudioBookPlayer.Views.SelectFolderPage"
-             CanBeDismissedByTappingOutsideOfPopup="False">
-    <VerticalStackLayout>
-        <Label Text="Select folder please"/>
-        <Button x:Name="CloseButton" Text="Close" Clicked="CloseButton_Clicked"/>
+             x:Class="MauiAudioBookPlayer.Views.SelectFolderPage">
 
-        <Button x:Name="PreviousButton" 
+    <ScrollView Margin="20" VerticalScrollBarVisibility="Always">
+        <StackLayout Margin="5" Spacing="20">
+            <Label Text="Select folder please"/>
+            <Label Text="{Binding CurrentPath}"/>
+            <Button x:Name="CloseButton" Text="Close" Clicked="CloseButton_Clicked"/>
+
+            <Button x:Name="PreviousButton" 
                 Text="Previous folder" 
                 IsVisible="{Binding CanReturn}"
                 Command="{Binding SelectFolderCommand}" 
                 CommandParameter="{Binding PreviousPath}"/>
-
-        <ScrollView Margin="20" VerticalScrollBarVisibility="Always">
-            <StackLayout Margin="5" Spacing="20">
-                <CollectionView ItemsSource="{Binding Folders}">
-                    <CollectionView.ItemTemplate>
-                        <DataTemplate>
-                            <HorizontalStackLayout BackgroundColor="Yellow">
-                                <Label Text="{Binding Name}" />
-                                <Button Text="Select" 
+            <CollectionView ItemsSource="{Binding Folders}">
+                <CollectionView.ItemTemplate>
+                    <DataTemplate>
+                        <HorizontalStackLayout BackgroundColor="Yellow">
+                            <Label Text="{Binding Name}" />
+                            <Button Text="Select" 
                                 Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodel:ExplorerViewModel}}, Path=SelectFolderCommand}"
                                 CommandParameter="{Binding Path}"/>
-                            </HorizontalStackLayout>
-                        </DataTemplate>
-                    </CollectionView.ItemTemplate>
-                </CollectionView>
-                <CollectionView ItemsSource="{Binding Files}">
-                    <CollectionView.ItemTemplate>
-                        <DataTemplate>
-                            <HorizontalStackLayout BackgroundColor="LightBlue">
-                                <Label Text="{Binding Name}" />
-                            </HorizontalStackLayout>
-                        </DataTemplate>
-                    </CollectionView.ItemTemplate>
-                </CollectionView>
-            </StackLayout>
-        </ScrollView>
-    </VerticalStackLayout>
-</toolkit:Popup>
+                        </HorizontalStackLayout>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+            <CollectionView ItemsSource="{Binding Files}">
+                <CollectionView.ItemTemplate>
+                    <DataTemplate>
+                        <HorizontalStackLayout BackgroundColor="LightBlue">
+                            <Label Text="{Binding Name}" />
+                        </HorizontalStackLayout>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+        </StackLayout>
+    </ScrollView>
+
+
+</ContentPage>

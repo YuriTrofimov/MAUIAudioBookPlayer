@@ -1,8 +1,8 @@
-// Copyright (c) 2022 Yuri Trofimov. 
+// Copyright (c) 2022 Yuri Trofimov.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
-using CommunityToolkit.Maui.Views;
 using CommunityToolkit.Mvvm.DependencyInjection;
+using MauiAudioBookPlayer.Model;
 using MauiAudioBookPlayer.ViewModel;
 
 namespace MauiAudioBookPlayer.Views;
@@ -10,7 +10,7 @@ namespace MauiAudioBookPlayer.Views;
 /// <summary>
 /// Select folder popup content.
 /// </summary>
-public partial class SelectFolderPage : Popup
+public partial class SelectFolderPage : ContentPage
 {
 	private readonly ExplorerViewModel viewModel;
 
@@ -25,8 +25,12 @@ public partial class SelectFolderPage : Popup
 		viewModel.Initialize();
 	}
 
-	private void CloseButton_Clicked(object sender, EventArgs e)
+	private async void CloseButton_Clicked(object sender, EventArgs e)
 	{
-		Close(viewModel.CurrentPath);
+		var navParams = new NavParams
+		{
+			SelectedFolder = viewModel.CurrentPath,
+		};
+		await Shell.Current.GoToAsync($"..", true, navParams);
 	}
 }

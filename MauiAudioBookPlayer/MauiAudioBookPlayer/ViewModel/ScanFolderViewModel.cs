@@ -4,9 +4,11 @@
 using System.Collections.ObjectModel;
 using AudioBookPlayer.Core.Model;
 using AudioBookPlayer.Core.Model.Entities;
+using AudioBookPlayer.Core.Services.BookScanService;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Input;
+using MauiAudioBookPlayer.Services;
 
 namespace MauiAudioBookPlayer.ViewModel
 {
@@ -16,10 +18,14 @@ namespace MauiAudioBookPlayer.ViewModel
 	public partial class ScanFolderViewModel : ObservableObject
 	{
 		private readonly IAppDataRepository repository;
+		private readonly IScanService scanService;
 		private bool initialized;
 
 		[ObservableProperty]
 		private ObservableCollection<ScanFolder> folders;
+
+		[ObservableProperty]
+		private bool loading;
 
 		/// <summary>
 		/// Initializes a new instance of the <see cref="ScanFolderViewModel"/> class.
@@ -27,6 +33,7 @@ namespace MauiAudioBookPlayer.ViewModel
 		public ScanFolderViewModel()
 		{
 			repository = Ioc.Default.GetService<IAppDataRepository>();
+			scanService = Ioc.Default.GetService<IScanService>();
 			folders = new ObservableCollection<ScanFolder>();
 			initialized = false;
 		}
@@ -51,6 +58,20 @@ namespace MauiAudioBookPlayer.ViewModel
 			folders.Clear();
 			var scanFolders = await repository.GetAllScanFoldersAsync();
 			scanFolders.ForEach(f => folders.Add(f));
+		}
+
+		[RelayCommand]
+		private async Task Scan()
+		{
+			try
+			{
+				Loading = true;
+				await scanService.ScanAsync();
+			}
+			finally
+			{
+				Loading = false;
+			}
 		}
 
 		[RelayCommand]

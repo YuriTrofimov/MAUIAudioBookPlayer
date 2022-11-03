@@ -5,6 +5,7 @@ using AudioBookPlayer.Core.Model;
 using AudioBookPlayer.Core.Services.BookScanService;
 using AudioBookPlayer.Core.Services.ExplorerService;
 using CommunityToolkit.Maui;
+using MauiAudio;
 using MauiAudioBookPlayer.Extensions;
 using MauiAudioBookPlayer.Services;
 using MauiAudioBookPlayer.ViewModel;
@@ -26,6 +27,7 @@ public static class MauiProgram
 		builder
 			.UseMauiApp<App>()
 			.UseMauiCommunityToolkit()
+			.UseMauiAudio()
 			.ConfigureFonts(fonts =>
 			{
 				fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");
@@ -51,9 +53,14 @@ public static class MauiProgram
 #elif ANDROID
 		builder.Services.AddSingleton<IExplorerService, MauiAudioBookPlayer.Platforms.Android.AndroidExplorerService>();
 #endif
+
 		builder.Services.AddSingleton<IBookScanService, BookScanService>();
+		builder.Services.AddSingleton<IScanService, ScanService>();
+
 		builder.Services.AddTransient<ScanFolderViewModel>();
 		builder.Services.AddTransient<ExplorerViewModel>();
+		builder.Services.AddTransient<BookListViewModel>();
+		builder.Services.AddTransient<BookPlayerViewModel>();
 
 		builder.Services.AddSingleton<IMauiInitializeService>(new IocConfigurationService());
 		return builder;

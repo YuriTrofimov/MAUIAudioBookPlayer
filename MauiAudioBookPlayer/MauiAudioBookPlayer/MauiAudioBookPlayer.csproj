@@ -10,6 +10,7 @@
 		<UseMaui>true</UseMaui>
 		<SingleProject>true</SingleProject>
 		<ImplicitUsings>enable</ImplicitUsings>
+		<AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
 
 		<!-- Display name -->
 		<ApplicationTitle>MauiAudioBookPlayer</ApplicationTitle>
@@ -63,6 +64,7 @@
 	<ItemGroup>
 		<PackageReference Include="CommunityToolkit.Maui" Version="1.3.0" />
 		<PackageReference Include="CommunityToolkit.Mvvm" Version="8.0.0" />
+		<PackageReference Include="Plugin.MauiAudio" Version="1.0.7" />
 		<PackageReference Include="StyleCop.Analyzers" Version="1.2.0-beta.435">
 		  <PrivateAssets>all</PrivateAssets>
 		  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
@@ -74,6 +76,12 @@
 	</ItemGroup>
 
 	<ItemGroup>
+		<MauiXaml Update="Views\BookPlayerPage.xaml">
+		  <Generator>MSBuild:Compile</Generator>
+		</MauiXaml>
+		<MauiXaml Update="Views\LibraryPage.xaml">
+		  <Generator>MSBuild:Compile</Generator>
+		</MauiXaml>
 		<MauiXaml Update="Views\ManageScanFolders.xaml">
 			<Generator>MSBuild:Compile</Generator>
 		</MauiXaml>

@@ -26,7 +26,8 @@ namespace AudioBookPlayer.Core.Model.Entities
 		/// </summary>
 		[PrimaryKey]
 		[AutoIncrement]
-		public int ID { get; set; }
+		[Column(nameof(ID))]
+		public int? ID { get; set; }
 
 		/// <summary>
 		/// Gets or sets book caption.
@@ -46,12 +47,13 @@ namespace AudioBookPlayer.Core.Model.Entities
 		/// </summary>
 		[MaxLength(500)]
 		[NotNull]
+		[Unique]
 		public string FolderPath { get; set; } = string.Empty;
 
 		/// <summary>
 		/// Gets or sets book files list.
 		/// </summary>
-		[OneToMany]
+		[OneToMany(CascadeOperations = CascadeOperation.CascadeDelete)]
 		public List<BookFile> Files { get; set; }
 
 		/// <summary>

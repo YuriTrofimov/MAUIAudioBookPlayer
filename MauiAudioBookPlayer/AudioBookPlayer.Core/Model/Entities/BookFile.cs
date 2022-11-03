@@ -38,7 +38,8 @@ namespace AudioBookPlayer.Core.Model.Entities
 		/// </summary>
 		[PrimaryKey]
 		[AutoIncrement]
-		public int ID { get; set; }
+		[Column(nameof(ID))]
+		public int? ID { get; set; }
 
 		/// <summary>
 		/// Gets or sets owning book record identifier.
@@ -58,6 +59,7 @@ namespace AudioBookPlayer.Core.Model.Entities
 		/// </summary>
 		[MaxLength(500)]
 		[NotNull]
+		[Unique]
 		public string FilePath { get; set; }
 
 		/// <summary>
