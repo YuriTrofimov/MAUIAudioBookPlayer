@@ -43,6 +43,11 @@ namespace AudioBookPlayer.Core.Model.Entities
 		public string? CoverImagePath { get; set; }
 
 		/// <summary>
+		/// Gets a value indicating whether book has cover image.
+		/// </summary>
+		public bool HasCoverImage => !string.IsNullOrEmpty(CoverImagePath);
+
+		/// <summary>
 		/// Gets or sets book root folder path.
 		/// </summary>
 		[MaxLength(500)]

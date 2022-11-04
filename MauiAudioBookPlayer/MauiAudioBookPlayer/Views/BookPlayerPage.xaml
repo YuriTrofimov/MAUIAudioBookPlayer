@@ -3,32 +3,64 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:local="clr-namespace:MauiAudioBookPlayer.ViewModel"
              xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+             xmlns:state="clr-namespace:MauiAudioBookPlayer.Model"
              x:Class="MauiAudioBookPlayer.Views.BookPlayerPage"
              Title="{Binding Book.Caption}">
     <ContentPage.BindingContext>
-        <local:BookPlayerViewModel/>
+        <local:BookPlayerViewModel />
     </ContentPage.BindingContext>
-    <ContentPage.Resources>
-        <ResourceDictionary>
-            <toolkit:IsStringNullOrEmptyConverter x:Key="ConvertStringNull" />
-            <toolkit:IsStringNotNullOrEmptyConverter x:Key="ConvertStringNotNull" />
-        </ResourceDictionary>
-    </ContentPage.Resources>
     <VerticalStackLayout>
-        <Label 
-            Text="{Binding Book.Caption}"
-            VerticalOptions="Center" 
-            HorizontalOptions="Center" />
-        <ScrollView>
+        <Grid HorizontalOptions="CenterAndExpand" ColumnDefinitions="*,*,*">
+            <ImageButton Source="icon_step_back.png"
+                         HeightRequest="48" WidthRequest="48"
+                         Command="{Binding PlayPreviousCommand}">
+            </ImageButton>
+            <ImageButton Grid.Column="1"
+                         HeightRequest="48" WidthRequest="48"
+                         Command="{Binding TogglePlayCommand}" Margin="35,0">
+                <ImageButton.Triggers>
+                    <DataTrigger TargetType="ImageButton" Binding="{x:Binding State}"
+                                 Value="{x:Static state:EPlayerState.Stop}">
+                        <Setter Property="Source" Value="icon_stop.png" />
+                    </DataTrigger>
+                    <DataTrigger TargetType="ImageButton" Binding="{x:Binding State}"
+                                 Value="{x:Static state:EPlayerState.Pause}">
+                        <Setter Property="Source" Value="icon_play.png" />
+                    </DataTrigger>
+                    <DataTrigger TargetType="ImageButton" Binding="{x:Binding State}"
+                                 Value="{x:Static state:EPlayerState.Play}">
+                        <Setter Property="Source" Value="icon_pause.png" />
+                    </DataTrigger>
+                </ImageButton.Triggers>
+            </ImageButton>
+            <ImageButton Grid.Column="2"
+                         Source="icon_step_forward.png"
+                         HeightRequest="48" WidthRequest="48"
+                         Command="{Binding PlayNextCommand}">
+            </ImageButton>
+        </Grid>
+
+        <Grid HorizontalOptions="Fill" ColumnDefinitions="*,*" RowDefinitions="*,*" Margin="10,45,10,35">
+            <Slider x:Name="FileProgressSlider" Grid.ColumnSpan="2"
+                IsEnabled="{Binding SliderVisible}"
+                Minimum="0" Maximum="{Binding FileLength}"
+                Value="{Binding FileProgress, Mode=TwoWay}"
+                DragStartedCommand="{Binding SliderDragStartCommand}"
+                DragCompletedCommand="{Binding SliderDragStopCommand}" />
+            <Label Grid.Row="1" Text="{Binding TimeProgress}" VerticalOptions="Center" HorizontalOptions="Start" />
+            <Label Grid.Row="1" Grid.Column="1" Text="{Binding TotalTime}" VerticalOptions="Center" HorizontalOptions="End" />
+        </Grid>
+
+        <ScrollView Padding="5">
             <StackLayout>
-                <CollectionView ItemsSource="{Binding Files}">
+                <CollectionView SelectionMode="Single"
+                                SelectedItem="{Binding SelectedFile}"
+                                SelectionChangedCommand="{Binding PlayCommand}"
+                                ItemsSource="{Binding Files}">
                     <CollectionView.ItemTemplate>
                         <DataTemplate>
-                            <HorizontalStackLayout>
+                            <HorizontalStackLayout Margin="10,5" HorizontalOptions="Fill">
                                 <Label Text="{Binding Name}" />
-                                <Button Text="Play" 
-                                        Command="{Binding Source={RelativeSource AncestorType={x:Type local:BookPlayerViewModel}}, Path=PlayBookCommand}}"
-                                        CommandParameter="{Binding .}"/>
                             </HorizontalStackLayout>
                         </DataTemplate>
                     </CollectionView.ItemTemplate>

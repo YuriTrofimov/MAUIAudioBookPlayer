@@ -4,7 +4,6 @@
 using System.Collections.ObjectModel;
 using AudioBookPlayer.Core.Model;
 using AudioBookPlayer.Core.Model.Entities;
-using AudioBookPlayer.Core.Services.BookScanService;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Input;

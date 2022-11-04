@@ -24,16 +24,21 @@
                 </CollectionView.Resources>
                 <CollectionView.ItemTemplate>
                     <DataTemplate>
-                        <Grid>
+                        <Grid Margin="10,5">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="100" />
                                 <ColumnDefinition Width="*" />
                             </Grid.ColumnDefinitions>
-                            <Image Margin="5"
-                                   Source="{Binding CoverImagePath}"
-                                    IsVisible="{Binding CoverImagePath, Converter={StaticResource ConvertStringNotNull}}" />
-                            <Image Margin="5" Source="Resources/Images/icon_book_cover.png" 
-                                   IsVisible="{Binding CoverImagePath, Converter={StaticResource ConvertStringNull}}" />
+                            <Image Margin="5" WidthRequest="100" MinimumHeightRequest="100">
+                                <Image.Triggers>
+                                    <DataTrigger TargetType="Image" Binding="{Binding HasCoverImage}" Value="True">
+                                        <Setter Property="Source" Value="{Binding CoverImagePath}"/>
+                                    </DataTrigger>
+                                    <DataTrigger TargetType="Image" Binding="{Binding HasCoverImage}" Value="False">
+                                        <Setter Property="Source" Value="icon_book.png"/>
+                                    </DataTrigger>
+                                </Image.Triggers>
+                            </Image>
                             <Label Margin="5" Text="{Binding Caption}" Grid.Column="1" />
                         </Grid>
                     </DataTemplate>

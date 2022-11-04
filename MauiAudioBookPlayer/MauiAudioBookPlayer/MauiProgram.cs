@@ -56,11 +56,12 @@ public static class MauiProgram
 
 		builder.Services.AddSingleton<IBookScanService, BookScanService>();
 		builder.Services.AddSingleton<IScanService, ScanService>();
+		builder.Services.AddSingleton<BookPlayerViewModel>();
+		builder.Services.AddSingleton<IMessageBoxService, MessageBoxService>();
 
 		builder.Services.AddTransient<ScanFolderViewModel>();
 		builder.Services.AddTransient<ExplorerViewModel>();
 		builder.Services.AddTransient<BookListViewModel>();
-		builder.Services.AddTransient<BookPlayerViewModel>();
 
 		builder.Services.AddSingleton<IMauiInitializeService>(new IocConfigurationService());
 		return builder;

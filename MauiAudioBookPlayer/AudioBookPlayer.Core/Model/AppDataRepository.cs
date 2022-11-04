@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Threading.Tasks;
 using AudioBookPlayer.Core.Model.Entities;
 using SQLite;
@@ -190,17 +191,24 @@ namespace AudioBookPlayer.Core.Model
 		/// <returns>Books records.</returns>
 		public async Task<List<Book>> GetAllBooksAsync()
 		{
+			var sw = new Stopwatch();
 			try
 			{
 				await InitAsync();
 				if (connection != null)
 				{
+					sw.Start();
 					return await connection.Table<Book>().ToListAsync();
 				}
 			}
 			catch (Exception ex)
 			{
 				Error = ex.Message;
+			}
+			finally
+			{
+				sw.Stop();
+				Trace.TraceInformation($"Book list loaded in:{sw.ElapsedMilliseconds} ms");
 			}
 
 			return new List<Book>();
@@ -218,6 +226,7 @@ namespace AudioBookPlayer.Core.Model
 				if (connection != null)
 				{
 					await connection.DeleteAllAsync<Book>();
+					await connection.DeleteAllAsync<BookFile>();
 				}
 			}
 			catch (Exception ex)
@@ -233,6 +242,7 @@ namespace AudioBookPlayer.Core.Model
 		/// <returns>Book files records.</returns>
 		public async Task<List<BookFile>> GetAllBookFilesAsync(Book book)
 		{
+			var sw = new Stopwatch();
 			try
 			{
 				if (book == null)
@@ -243,6 +253,7 @@ namespace AudioBookPlayer.Core.Model
 				await InitAsync();
 				if (connection != null)
 				{
+					sw.Start();
 					return await connection.Table<BookFile>()
 						.Where(a => a.BookID == book.ID).
 						ToListAsync();
@@ -252,8 +263,35 @@ namespace AudioBookPlayer.Core.Model
 			{
 				Error = ex.Message;
 			}
+			finally
+			{
+				sw.Stop();
+				Trace.TraceInformation($"Book with ID:{book.ID} files list loaded in:{sw.ElapsedMilliseconds} ms");
+			}
 
 			return new List<BookFile>();
+		}
+
+		/// <summary>
+		/// Clear database.
+		/// </summary>
+		/// <returns>Async task.</returns>
+		public async Task ClearDB()
+		{
+			try
+			{
+				await InitAsync();
+				if (connection != null)
+				{
+					await connection.DeleteAllAsync<ScanFolder>();
+					await connection.DeleteAllAsync<Book>();
+					await connection.DeleteAllAsync<BookFile>();
+				}
+			}
+			catch (Exception ex)
+			{
+				Error = ex.Message;
+			}
 		}
 
 		private async Task InitAsync()

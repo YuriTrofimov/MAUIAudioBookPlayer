@@ -24,6 +24,15 @@ public partial class LibraryPage : ContentPage
 		InitViewModel();
 	}
 
+	/// <summary>
+	/// OnPage appearing.
+	/// </summary>
+	protected override async void OnAppearing()
+	{
+		base.OnAppearing();
+		await viewModel.ReloadLibraryAsync();
+	}
+
 	private async void InitViewModel()
 	{
 		if (viewModel == null)

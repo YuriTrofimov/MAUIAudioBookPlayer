@@ -50,7 +50,11 @@ namespace MauiAudioBookPlayer.ViewModel
 			initialized = true;
 		}
 
-		private async Task ReloadLibraryAsync()
+		/// <summary>
+		/// Reload library.
+		/// </summary>
+		/// <returns>Async task.</returns>
+		public async Task ReloadLibraryAsync()
 		{
 			books.Clear();
 			var booksList = await repository.GetAllBooksAsync();

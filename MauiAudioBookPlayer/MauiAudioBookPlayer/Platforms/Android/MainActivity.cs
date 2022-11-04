@@ -28,8 +28,6 @@ public class MainActivity : MauiAppCompatActivity, IAudioActivity
 	/// </summary>
 	public static MainActivity Instance => instance;
 
-	public MediaPlayerServiceBinder Binder { get; set; }
-
 	public event StatusChangedEventHandler StatusChanged;
 
 	public event CoverReloadedEventHandler CoverReloaded;
@@ -37,6 +35,8 @@ public class MainActivity : MauiAppCompatActivity, IAudioActivity
 	public event PlayingEventHandler Playing;
 
 	public event BufferingEventHandler Buffering;
+
+	public MediaPlayerServiceBinder Binder { get; set; }
 
 	/// <summary>
 	/// Called when the activity is first created.

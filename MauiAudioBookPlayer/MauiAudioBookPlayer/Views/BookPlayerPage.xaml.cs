@@ -11,12 +11,15 @@ namespace MauiAudioBookPlayer.Views;
 /// </summary>
 public partial class BookPlayerPage : ContentPage, IQueryAttributable
 {
+	private readonly BookPlayerViewModel viewModel;
+
 	/// <summary>
 	/// Initializes a new instance of the <see cref="BookPlayerPage"/> class.
 	/// </summary>
 	public BookPlayerPage()
 	{
 		InitializeComponent();
+		viewModel = (BookPlayerViewModel)BindingContext;
 	}
 
 	/// <summary>
@@ -25,24 +28,22 @@ public partial class BookPlayerPage : ContentPage, IQueryAttributable
 	/// <param name="query">Query parameters dictionary.</param>
 	public async void ApplyQueryAttributes(IDictionary<string, object> query)
 	{
-		var vm = BindingContext as BookPlayerViewModel;
-		if (vm == null)
-		{
-			return;
-		}
-
-		vm.Book = query.AsNavParams().SelectedBook;
+		viewModel.Book = query.AsNavParams().SelectedBook;
 		await InitViewModel();
+	}
+
+	/// <summary>
+	/// On page dissapear.
+	/// </summary>
+	protected override async void OnDisappearing()
+	{
+		base.OnDisappearing();
+		await viewModel.StopCommand.ExecuteAsync(null);
+		await viewModel.SaveProgress();
 	}
 
 	private async Task InitViewModel()
 	{
-		var vm = BindingContext as BookPlayerViewModel;
-		if (vm == null)
-		{
-			return;
-		}
-
-		await vm.InitializeAsync();
+		await viewModel.InitializeAsync();
 	}
 }

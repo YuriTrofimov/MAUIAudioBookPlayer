@@ -70,5 +70,11 @@ namespace AudioBookPlayer.Core.Model
 		/// <param name="book">Book.</param>
 		/// <returns>Book files records.</returns>
 		Task<List<BookFile>> GetAllBookFilesAsync(Book book);
+
+		/// <summary>
+		/// Clear database.
+		/// </summary>
+		/// <returns>Async task.</returns>
+		Task ClearDB();
 	}
 }
