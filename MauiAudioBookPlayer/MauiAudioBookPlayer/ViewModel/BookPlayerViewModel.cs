@@ -57,6 +57,30 @@ namespace MauiAudioBookPlayer.ViewModel
 		private string timeProgress;
 
 		/// <summary>
+		/// Total book files count.
+		/// </summary>
+		[ObservableProperty]
+		private int filesCount;
+
+		/// <summary>
+		/// Book readed files quantity.
+		/// </summary>
+		[ObservableProperty]
+		private int readedFiles;
+
+		/// <summary>
+		/// Overall book read progress.
+		/// </summary>
+		[ObservableProperty]
+		private double readProgress;
+
+		/// <summary>
+		/// Overall book read progress message.
+		/// </summary>
+		[ObservableProperty]
+		private string progressMessage;
+
+		/// <summary>
 		/// Initializes a new instance of the <see cref="BookPlayerViewModel"/> class.
 		/// </summary>
 		public BookPlayerViewModel()
@@ -75,9 +99,17 @@ namespace MauiAudioBookPlayer.ViewModel
 		/// <summary>
 		/// Initialize view model.
 		/// </summary>
+		/// <param name="bookToPlay">Book to play.</param>
 		/// <returns>Async task.</returns>
-		public async Task InitializeAsync()
+		public async Task InitializeAsync(Book bookToPlay)
 		{
+			if (bookToPlay == null)
+			{
+				return;
+			}
+
+			Book = bookToPlay;
+
 			await Stop();
 			await ReloadFilesAsync();
 
@@ -106,6 +138,11 @@ namespace MauiAudioBookPlayer.ViewModel
 		/// <returns>Async task.</returns>
 		public async Task SaveProgress()
 		{
+			if (SelectedFile == null || Book == null)
+			{
+				return;
+			}
+
 			await BookProgress.SaveAsync(Book.FolderPath, SelectedFile.FilePath, FileProgress);
 		}
 
@@ -130,6 +167,12 @@ namespace MauiAudioBookPlayer.ViewModel
 
 				await audioService.InitializeAsync(SelectedFile.FilePath);
 				FileProgress = progress;
+				ReadedFiles = Files.IndexOf(SelectedFile) + 1;
+				if (Files.Count > 0)
+				{
+					ReadProgress = (double)ReadedFiles / (double)Files.Count;
+					ProgressMessage = $"Files readed {ReadedFiles} of {Files.Count}";
+				}
 			}
 			catch (Exception ex)
 			{
@@ -250,12 +293,6 @@ namespace MauiAudioBookPlayer.ViewModel
 		/// <returns>Async task.</returns>
 		private async Task TimerTask()
 		{
-			void UpdateProgress()
-			{
-				FileLength = audioService.Duration;
-				FileProgress = audioService.CurrentPosition;
-			}
-
 			while (!timerToken.IsCancellationRequested)
 			{
 				if (audioService.IsPlaying && !sliderDragging)
@@ -272,6 +309,12 @@ namespace MauiAudioBookPlayer.ViewModel
 
 				await Task.Delay(500, timerToken.Token);
 			}
+		}
+
+		private void UpdateProgress()
+		{
+			FileLength = audioService.Duration;
+			FileProgress = audioService.CurrentPosition;
 		}
 
 		private async void BookPlayerViewModel_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
@@ -303,6 +346,16 @@ namespace MauiAudioBookPlayer.ViewModel
 		private async Task DisplayError(Exception ex)
 		{
 			await messageBoxService.ShowMessageBoxAsync("Error", ex.Message);
+		}
+
+		private partial void OnFilesChanged(ObservableCollection<BookFile> value)
+		{
+			if (value == null)
+			{
+				return;
+			}
+
+			FilesCount = value.Count;
 		}
 	}
 }

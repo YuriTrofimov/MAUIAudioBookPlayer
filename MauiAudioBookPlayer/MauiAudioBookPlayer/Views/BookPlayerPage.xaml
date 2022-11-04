@@ -5,11 +5,15 @@
              xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
              xmlns:state="clr-namespace:MauiAudioBookPlayer.Model"
              x:Class="MauiAudioBookPlayer.Views.BookPlayerPage"
-             Title="{Binding Book.Caption}">
+             Title="Player">
     <ContentPage.BindingContext>
         <local:BookPlayerViewModel />
     </ContentPage.BindingContext>
     <VerticalStackLayout>
+        <Label HorizontalOptions="Center" Text="{Binding Book.Caption}" Margin="10,10,10,5" />
+        <ProgressBar HorizontalOptions="Fill" Progress="{Binding ReadProgress}" Margin="10,10" />
+        <Label HorizontalOptions="Center" Text="{Binding ProgressMessage}" Margin="10,0,10,15" />
+
         <Grid HorizontalOptions="CenterAndExpand" ColumnDefinitions="*,*,*">
             <ImageButton Source="icon_step_back.png"
                          HeightRequest="48" WidthRequest="48"
@@ -51,21 +55,17 @@
             <Label Grid.Row="1" Grid.Column="1" Text="{Binding TotalTime}" VerticalOptions="Center" HorizontalOptions="End" />
         </Grid>
 
-        <ScrollView Padding="5">
-            <StackLayout>
-                <CollectionView SelectionMode="Single"
-                                SelectedItem="{Binding SelectedFile}"
-                                SelectionChangedCommand="{Binding PlayCommand}"
-                                ItemsSource="{Binding Files}">
-                    <CollectionView.ItemTemplate>
-                        <DataTemplate>
-                            <HorizontalStackLayout Margin="10,5" HorizontalOptions="Fill">
-                                <Label Text="{Binding Name}" />
-                            </HorizontalStackLayout>
-                        </DataTemplate>
-                    </CollectionView.ItemTemplate>
-                </CollectionView>
-            </StackLayout>
-        </ScrollView>
+        <Grid HorizontalOptions="Fill" Margin="10,20">
+            <Image VerticalOptions="CenterAndExpand">
+                <Image.Triggers>
+                    <DataTrigger TargetType="Image" Binding="{Binding Book.HasCoverImage}" Value="True">
+                        <Setter Property="Source" Value="{Binding Book.CoverImagePath}"/>
+                    </DataTrigger>
+                    <DataTrigger TargetType="Image" Binding="{Binding Book.HasCoverImage}" Value="False">
+                        <Setter Property="Source" Value="icon_book.png"/>
+                    </DataTrigger>
+                </Image.Triggers>
+            </Image>
+        </Grid>
     </VerticalStackLayout>
 </ContentPage>

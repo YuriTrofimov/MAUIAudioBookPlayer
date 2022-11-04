@@ -28,8 +28,11 @@ public partial class BookPlayerPage : ContentPage, IQueryAttributable
 	/// <param name="query">Query parameters dictionary.</param>
 	public async void ApplyQueryAttributes(IDictionary<string, object> query)
 	{
-		viewModel.Book = query.AsNavParams().SelectedBook;
-		await InitViewModel();
+		var bookToPlay = query.AsNavParams().SelectedBook;
+		if (bookToPlay != null)
+		{
+			await viewModel.InitializeAsync(bookToPlay);
+		}
 	}
 
 	/// <summary>
@@ -40,10 +43,5 @@ public partial class BookPlayerPage : ContentPage, IQueryAttributable
 		base.OnDisappearing();
 		await viewModel.StopCommand.ExecuteAsync(null);
 		await viewModel.SaveProgress();
-	}
-
-	private async Task InitViewModel()
-	{
-		await viewModel.InitializeAsync();
 	}
 }
