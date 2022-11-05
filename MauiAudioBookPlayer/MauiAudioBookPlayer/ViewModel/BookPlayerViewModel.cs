@@ -23,8 +23,20 @@ namespace MauiAudioBookPlayer.ViewModel
 		private readonly INativeAudioService audioService;
 		private readonly IMessageBoxService messageBoxService;
 		private readonly CancellationTokenSource timerToken;
-		private readonly Task timerTask;
+
+		/// <summary>
+		/// Book files collection.
+		/// </summary>
+		private readonly ObservableCollection<BookFile> files;
+
 		private bool sliderDragging;
+		private DateTime lastActivityTime;
+
+		[ObservableProperty]
+		private bool busy;
+
+		[ObservableProperty]
+		private bool controlsEnabled;
 
 		[ObservableProperty]
 		private Book book;
@@ -45,28 +57,10 @@ namespace MauiAudioBookPlayer.ViewModel
 		private bool sliderVisible;
 
 		[ObservableProperty]
-		private ObservableCollection<BookFile> files;
-
-		[ObservableProperty]
 		private string totalTime;
 
 		[ObservableProperty]
-		private string timeLeft;
-
-		[ObservableProperty]
 		private string timeProgress;
-
-		/// <summary>
-		/// Total book files count.
-		/// </summary>
-		[ObservableProperty]
-		private int filesCount;
-
-		/// <summary>
-		/// Book readed files quantity.
-		/// </summary>
-		[ObservableProperty]
-		private int readedFiles;
 
 		/// <summary>
 		/// Overall book read progress.
@@ -80,6 +74,12 @@ namespace MauiAudioBookPlayer.ViewModel
 		[ObservableProperty]
 		private string progressMessage;
 
+		[ObservableProperty]
+		private bool sleepModeEnabled;
+
+		[ObservableProperty]
+		private int maxInactivityMinutes;
+
 		/// <summary>
 		/// Initializes a new instance of the <see cref="BookPlayerViewModel"/> class.
 		/// </summary>
@@ -90,10 +90,10 @@ namespace MauiAudioBookPlayer.ViewModel
 			messageBoxService = Ioc.Default.GetService<IMessageBoxService>();
 			files = new ObservableCollection<BookFile>();
 			timerToken = new CancellationTokenSource();
-			timerTask = Task.Run(TimerTask, timerToken.Token);
-			PropertyChanged += BookPlayerViewModel_PropertyChanged;
 			audioService.PlayEnded += AudioService_PlayEnded;
 			State = EPlayerState.Stop;
+			maxInactivityMinutes = 10;
+			TimerTask();
 		}
 
 		/// <summary>
@@ -109,26 +109,28 @@ namespace MauiAudioBookPlayer.ViewModel
 			}
 
 			Book = bookToPlay;
+			lastActivityTime = DateTime.Now;
 
-			await Stop();
+			await StopAsync();
 			await ReloadFilesAsync();
+			var progress = await BookProgress.LoadAsync(Book.FolderPath);
 
-			async void Init()
+			void Init()
 			{
-				var progress = await BookProgress.LoadAsync(Book.FolderPath);
-				if (progress != null)
+				FileProgress = progress.Position;
+				SelectedFile = files.FirstOrDefault(f => f.FilePath == progress.FilePath);
+			}
+
+			if (progress != null)
+			{
+				if (MainThread.IsMainThread)
 				{
-					SelectedFile = Files.FirstOrDefault(f => f.FilePath == progress.FilePath);
+					Init();
 				}
-			}
-
-			if (MainThread.IsMainThread)
-			{
-				Init();
-			}
-			else
-			{
-				MainThread.BeginInvokeOnMainThread(Init);
+				else
+				{
+					MainThread.BeginInvokeOnMainThread(Init);
+				}
 			}
 		}
 
@@ -147,63 +149,10 @@ namespace MauiAudioBookPlayer.ViewModel
 		}
 
 		/// <summary>
-		/// Stop timers. Clear resources.
+		/// Stop current playback.
 		/// </summary>
-		public async void Dispose()
-		{
-			timerToken.Cancel();
-			await Stop();
-			await audioService.DisposeAsync();
-		}
-
-		private async Task InitAudioFile(double progress = 0.0f)
-		{
-			try
-			{
-				if (SelectedFile == null)
-				{
-					return;
-				}
-
-				await audioService.InitializeAsync(SelectedFile.FilePath);
-				FileProgress = progress;
-				ReadedFiles = Files.IndexOf(SelectedFile) + 1;
-				if (Files.Count > 0)
-				{
-					ReadProgress = (double)ReadedFiles / (double)Files.Count;
-					ProgressMessage = $"Files readed {ReadedFiles} of {Files.Count}";
-				}
-			}
-			catch (Exception ex)
-			{
-				await DisplayError(ex);
-			}
-		}
-
-		[RelayCommand]
-		private async Task Play()
-		{
-			try
-			{
-				if (SelectedFile == null)
-				{
-					SelectedFile = Files.FirstOrDefault();
-				}
-
-				if (SelectedFile != null)
-				{
-					await audioService.PlayAsync(FileProgress);
-					State = EPlayerState.Play;
-				}
-			}
-			catch (Exception ex)
-			{
-				await DisplayError(ex);
-			}
-		}
-
-		[RelayCommand]
-		private async Task Stop()
+		/// <returns>Async task.</returns>
+		public async Task StopAsync()
 		{
 			try
 			{
@@ -215,7 +164,71 @@ namespace MauiAudioBookPlayer.ViewModel
 				if (audioService.IsPlaying)
 				{
 					await audioService.PauseAsync();
+					await SaveProgress();
 					State = EPlayerState.Pause;
+					OnPropertyChanged(nameof(State));
+				}
+			}
+			catch (Exception ex)
+			{
+				await DisplayError(ex);
+			}
+		}
+
+		/// <summary>
+		/// Stop timers. Clear resources.
+		/// </summary>
+		public async void Dispose()
+		{
+			timerToken.Cancel();
+			await StopAsync();
+			await audioService.DisposeAsync();
+		}
+
+		private async Task InitAudioFile()
+		{
+			try
+			{
+				Busy = true;
+				if (SelectedFile == null)
+				{
+					return;
+				}
+
+				await audioService.InitializeAsync(SelectedFile.FilePath);
+				FileLength = audioService.Duration;
+				var readedFiles = files.IndexOf(SelectedFile) + 1;
+				if (files.Count > 0)
+				{
+					ReadProgress = (double)readedFiles / (double)files.Count;
+					ProgressMessage = $"Files readed {readedFiles} of {files.Count}";
+				}
+			}
+			catch (Exception ex)
+			{
+				await DisplayError(ex);
+			}
+			finally
+			{
+				Busy = false;
+			}
+		}
+
+		private async Task Play()
+		{
+			try
+			{
+				if (SelectedFile == null)
+				{
+					SelectedFile = files.FirstOrDefault();
+				}
+
+				if (SelectedFile != null)
+				{
+					await audioService.PlayAsync(FileProgress);
+					FileLength = audioService.Duration;
+					OnPropertyChanged(nameof(FileProgress));
+					State = EPlayerState.Play;
 				}
 			}
 			catch (Exception ex)
@@ -225,58 +238,106 @@ namespace MauiAudioBookPlayer.ViewModel
 		}
 
 		[RelayCommand]
+		private void ToggleSleepMode()
+		{
+			SleepModeEnabled = !sleepModeEnabled;
+		}
+
+		[RelayCommand]
 		private async void SliderDragStart()
 		{
-			await Stop();
-			sliderDragging = true;
+			try
+			{
+				await StopAsync();
+			}
+			finally
+			{
+				sliderDragging = true;
+			}
 		}
 
 		[RelayCommand]
 		private async void SliderDragStop()
 		{
-			sliderDragging = false;
-			await Play();
+			try
+			{
+				lastActivityTime = DateTime.Now;
+				await Play();
+				await SaveProgress();
+			}
+			finally
+			{
+				sliderDragging = false;
+			}
 		}
 
 		[RelayCommand]
 		private async void TogglePlay()
 		{
-			if (State == EPlayerState.Play)
+			try
 			{
-				await Stop();
+				Busy = true;
+				lastActivityTime = DateTime.Now;
+				audioService.Volume = 1.0f;
+				if (audioService.IsPlaying)
+				{
+					await StopAsync();
+				}
+				else
+				{
+					await Play();
+				}
 			}
-			else
+			finally
 			{
-				await Play();
+				Busy = false;
 			}
 		}
 
 		[RelayCommand]
 		private async void PlayPrevious()
 		{
-			var currentIndex = Files.IndexOf(SelectedFile);
-			if (Files.Count > 0)
+			try
 			{
-				if (currentIndex - 1 >= 0)
+				Busy = true;
+				FileProgress = 0.0f;
+				var currentIndex = files.IndexOf(SelectedFile);
+				if (files.Count > 0)
 				{
-					SelectedFile = Files[currentIndex - 1];
-					await Play();
+					if (currentIndex - 1 >= 0)
+					{
+						SelectedFile = files[currentIndex - 1];
+						await Play();
+					}
+					else
+					{
+						await audioService.SetCurrentTime(0.0f);
+					}
 				}
-				else
-				{
-					await audioService.SetCurrentTime(0.0f);
-				}
+			}
+			finally
+			{
+				Busy = false;
 			}
 		}
 
 		[RelayCommand]
 		private async void PlayNext()
 		{
-			var currentIndex = Files.IndexOf(SelectedFile);
-			if (currentIndex + 1 < Files.Count)
+			try
 			{
-				SelectedFile = Files[currentIndex + 1];
-				await Play();
+				Busy = true;
+				FileProgress = 0.0f;
+				var currentIndex = files.IndexOf(SelectedFile);
+				if (currentIndex + 1 < files.Count)
+				{
+					SelectedFile = files[currentIndex + 1];
+					await Play();
+				}
+			}
+			finally
+			{
+				Busy = false;
 			}
 		}
 
@@ -290,52 +351,55 @@ namespace MauiAudioBookPlayer.ViewModel
 		/// <summary>
 		/// Update file progress task.
 		/// </summary>
-		/// <returns>Async task.</returns>
-		private async Task TimerTask()
+		private async void TimerTask()
 		{
 			while (!timerToken.IsCancellationRequested)
 			{
 				if (audioService.IsPlaying && !sliderDragging)
 				{
-					if (MainThread.IsMainThread)
-					{
-						UpdateProgress();
-					}
-					else
-					{
-						MainThread.BeginInvokeOnMainThread(UpdateProgress);
-					}
+					await UpdateProgress();
 				}
 
-				await Task.Delay(500, timerToken.Token);
+				await Task.Delay(1000, timerToken.Token);
 			}
 		}
 
-		private void UpdateProgress()
+		private async Task UpdateProgress()
 		{
-			FileLength = audioService.Duration;
+			if (SleepModeEnabled && (DateTime.Now - lastActivityTime).TotalSeconds > maxInactivityMinutes)
+			{
+				if (audioService.Volume > 0.2f)
+				{
+					audioService.Volume -= 0.05;
+				}
+				else
+				{
+					await StopAsync();
+				}
+			}
+
 			FileProgress = audioService.CurrentPosition;
 		}
 
-		private async void BookPlayerViewModel_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+		partial void OnFileProgressChanged(double value)
 		{
-			switch (e.PropertyName)
-			{
-				case nameof(SelectedFile):
-					await InitAudioFile();
-					break;
+			TimeProgress = TimeSpan.FromSeconds(value).ToFormattedTime();
+		}
 
-				case nameof(FileProgress):
-					TimeLeft = TimeSpan.FromSeconds(FileLength - FileProgress).ToFormattedTime();
-					TimeProgress = TimeSpan.FromSeconds(FileProgress).ToFormattedTime();
-					break;
+		partial void OnFileLengthChanged(double value)
+		{
+			TotalTime = TimeSpan.FromSeconds(value).ToFormattedTime();
+			SliderVisible = value > 0;
+		}
 
-				case nameof(FileLength):
-					TotalTime = TimeSpan.FromSeconds(FileLength).ToFormattedTime();
-					break;
-			}
+		partial void OnBusyChanged(bool value)
+		{
+			ControlsEnabled = !value;
+		}
 
-			SliderVisible = FileLength > 0;
+		async partial void OnSelectedFileChanged(BookFile value)
+		{
+			await InitAudioFile();
 		}
 
 		private void AudioService_PlayEnded(object sender, EventArgs e)
@@ -346,16 +410,6 @@ namespace MauiAudioBookPlayer.ViewModel
 		private async Task DisplayError(Exception ex)
 		{
 			await messageBoxService.ShowMessageBoxAsync("Error", ex.Message);
-		}
-
-		private partial void OnFilesChanged(ObservableCollection<BookFile> value)
-		{
-			if (value == null)
-			{
-				return;
-			}
-
-			FilesCount = value.Count;
 		}
 	}
 }

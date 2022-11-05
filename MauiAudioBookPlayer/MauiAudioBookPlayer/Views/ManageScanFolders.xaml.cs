@@ -50,9 +50,4 @@ public partial class ManageScanFolders : ContentPage, IQueryAttributable
 			viewModel.AddCommand.Execute(navParams.SelectedFolder);
 		}
 	}
-
-	private async void SelectFolder_Clicked(object sender, EventArgs e)
-	{
-		await Shell.Current.GoToAsync("explorer", true);
-	}
 }

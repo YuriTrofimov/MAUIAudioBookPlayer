@@ -1,6 +1,7 @@
 // Copyright (c) 2022 Yuri Trofimov.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
+using CommunityToolkit.Mvvm.DependencyInjection;
 using MauiAudioBookPlayer.Extensions;
 using MauiAudioBookPlayer.ViewModel;
 
@@ -19,7 +20,8 @@ public partial class BookPlayerPage : ContentPage, IQueryAttributable
 	public BookPlayerPage()
 	{
 		InitializeComponent();
-		viewModel = (BookPlayerViewModel)BindingContext;
+		viewModel = Ioc.Default.GetService<BookPlayerViewModel>();
+		BindingContext = viewModel;
 	}
 
 	/// <summary>
@@ -41,7 +43,6 @@ public partial class BookPlayerPage : ContentPage, IQueryAttributable
 	protected override async void OnDisappearing()
 	{
 		base.OnDisappearing();
-		await viewModel.StopCommand.ExecuteAsync(null);
-		await viewModel.SaveProgress();
+		await viewModel.StopAsync();
 	}
 }

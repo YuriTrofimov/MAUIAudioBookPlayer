@@ -6,6 +6,7 @@ using AudioBookPlayer.Core.Model;
 using AudioBookPlayer.Core.Model.Entities;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.DependencyInjection;
+using MauiAudioBookPlayer.Services;
 
 namespace MauiAudioBookPlayer.ViewModel
 {
@@ -15,6 +16,7 @@ namespace MauiAudioBookPlayer.ViewModel
 	public partial class BookListViewModel : ObservableObject
 	{
 		private readonly IAppDataRepository repository;
+		private readonly INavigationService navigationService;
 		private bool initialized;
 
 		[ObservableProperty]
@@ -22,6 +24,9 @@ namespace MauiAudioBookPlayer.ViewModel
 
 		[ObservableProperty]
 		private bool loading;
+
+		[ObservableProperty]
+		private bool controlsEnabled;
 
 		[ObservableProperty]
 		private Book selectedBook;
@@ -32,6 +37,7 @@ namespace MauiAudioBookPlayer.ViewModel
 		public BookListViewModel()
 		{
 			repository = Ioc.Default.GetService<IAppDataRepository>();
+			navigationService = Ioc.Default.GetService<INavigationService>();
 			books = new ObservableCollection<Book>();
 		}
 
@@ -56,9 +62,40 @@ namespace MauiAudioBookPlayer.ViewModel
 		/// <returns>Async task.</returns>
 		public async Task ReloadLibraryAsync()
 		{
-			books.Clear();
-			var booksList = await repository.GetAllBooksAsync();
-			booksList.ForEach(b => books.Add(b));
+			try
+			{
+				Loading = true;
+				books.Clear();
+				var booksList = await repository.GetAllBooksAsync();
+				booksList.ForEach(b => books.Add(b));
+			}
+			finally
+			{
+				Loading = false;
+			}
+		}
+
+		async partial void OnSelectedBookChanged(Book value)
+		{
+			try
+			{
+				Loading = true;
+				if (value == null)
+				{
+					return;
+				}
+
+				await navigationService.GoToBookPlayerAsync(value);
+			}
+			finally
+			{
+				Loading = false;
+			}
+		}
+
+		partial void OnLoadingChanged(bool value)
+		{
+			ControlsEnabled = !value;
 		}
 	}
 }

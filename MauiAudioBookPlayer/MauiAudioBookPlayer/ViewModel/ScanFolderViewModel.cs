@@ -18,13 +18,20 @@ namespace MauiAudioBookPlayer.ViewModel
 	{
 		private readonly IAppDataRepository repository;
 		private readonly IScanService scanService;
+		private readonly INavigationService navigationService;
 		private bool initialized;
 
 		[ObservableProperty]
 		private ObservableCollection<ScanFolder> folders;
 
 		[ObservableProperty]
+		private ScanFolder selectedFolder;
+
+		[ObservableProperty]
 		private bool loading;
+
+		[ObservableProperty]
+		private bool canDelete;
 
 		/// <summary>
 		/// Initializes a new instance of the <see cref="ScanFolderViewModel"/> class.
@@ -33,6 +40,7 @@ namespace MauiAudioBookPlayer.ViewModel
 		{
 			repository = Ioc.Default.GetService<IAppDataRepository>();
 			scanService = Ioc.Default.GetService<IScanService>();
+			navigationService = Ioc.Default.GetService<INavigationService>();
 			folders = new ObservableCollection<ScanFolder>();
 			initialized = false;
 		}
@@ -97,15 +105,26 @@ namespace MauiAudioBookPlayer.ViewModel
 		}
 
 		[RelayCommand]
-		private async Task Delete(string path)
+		private async Task Delete()
 		{
-			if (string.IsNullOrEmpty(path))
+			if (SelectedFolder == null)
 			{
 				return;
 			}
 
-			await repository.RemoveScanFolderAsync(path);
+			await repository.RemoveScanFolderAsync(SelectedFolder.Path);
 			await ReloadFoldersAsync();
+		}
+
+		[RelayCommand]
+		private async Task SelectNewScanFolder()
+		{
+			await navigationService.GoToFolderExplorer();
+		}
+
+		partial void OnSelectedFolderChanged(ScanFolder value)
+		{
+			CanDelete = value != null;
 		}
 	}
 }

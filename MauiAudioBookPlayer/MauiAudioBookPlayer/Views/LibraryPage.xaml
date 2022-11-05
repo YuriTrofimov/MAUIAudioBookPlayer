@@ -4,18 +4,11 @@
              xmlns:local="clr-namespace:MauiAudioBookPlayer.ViewModel"
              xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
              x:Class="MauiAudioBookPlayer.Views.LibraryPage"
-             IsBusy="{Binding Loading}"
              Title="Library">
-    <ContentPage.BindingContext>
-        <local:BookListViewModel />
-    </ContentPage.BindingContext>
     <ScrollView Padding="5">
         <StackLayout>
-            <CollectionView x:Name="BookList"
-                SelectionMode="Single" 
-                SelectedItem="{Binding SelectedBook, Mode=TwoWay}" 
-                SelectionChanged="BookList_SelectionChanged"
-                ItemsSource="{Binding Books}">
+            <CollectionView x:Name="BookList" ItemsSource="{Binding Books}" IsEnabled="{Binding ControlsEnabled}"
+                SelectionMode="Single" SelectedItem="{Binding SelectedBook, Mode=TwoWay}">
                 <CollectionView.Resources>
                     <ResourceDictionary>
                         <toolkit:IsStringNullOrEmptyConverter x:Key="ConvertStringNull" />
@@ -32,10 +25,10 @@
                             <Image Margin="5" WidthRequest="100" MinimumHeightRequest="100">
                                 <Image.Triggers>
                                     <DataTrigger TargetType="Image" Binding="{Binding HasCoverImage}" Value="True">
-                                        <Setter Property="Source" Value="{Binding CoverImagePath}"/>
+                                        <Setter Property="Source" Value="{Binding CoverImagePath}" />
                                     </DataTrigger>
                                     <DataTrigger TargetType="Image" Binding="{Binding HasCoverImage}" Value="False">
-                                        <Setter Property="Source" Value="icon_book.png"/>
+                                        <Setter Property="Source" Value="icon_book.png" />
                                     </DataTrigger>
                                 </Image.Triggers>
                             </Image>

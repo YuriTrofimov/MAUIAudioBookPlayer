@@ -7,23 +7,23 @@
 
     <ScrollView Margin="20" VerticalScrollBarVisibility="Always">
         <StackLayout Margin="5" Spacing="20">
-            <Label Text="Select folder please"/>
-            <Label Text="{Binding CurrentPath}"/>
-            <Button x:Name="CloseButton" Text="Close" Clicked="CloseButton_Clicked"/>
+            <Label Text="Select folder please" />
+            <Label Text="{Binding CurrentPath}" />
+            <Button x:Name="CloseButton" Text="Close" Clicked="CloseButton_Clicked" />
 
-            <Button x:Name="PreviousButton" 
-                Text="Previous folder" 
+            <Button x:Name="PreviousButton"
+                Text="Previous folder"
                 IsVisible="{Binding CanReturn}"
-                Command="{Binding SelectFolderCommand}" 
-                CommandParameter="{Binding PreviousPath}"/>
+                Command="{Binding SelectFolderCommand}"
+                CommandParameter="{Binding PreviousPath}" />
             <CollectionView ItemsSource="{Binding Folders}">
                 <CollectionView.ItemTemplate>
                     <DataTemplate>
                         <HorizontalStackLayout BackgroundColor="Yellow">
                             <Label Text="{Binding Name}" />
-                            <Button Text="Select" 
+                            <Button Text="Select"
                                 Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodel:ExplorerViewModel}}, Path=SelectFolderCommand}"
-                                CommandParameter="{Binding Path}"/>
+                                CommandParameter="{Binding Path}" />
                         </HorizontalStackLayout>
                     </DataTemplate>
                 </CollectionView.ItemTemplate>
@@ -39,6 +39,4 @@
             </CollectionView>
         </StackLayout>
     </ScrollView>
-
-
 </ContentPage>

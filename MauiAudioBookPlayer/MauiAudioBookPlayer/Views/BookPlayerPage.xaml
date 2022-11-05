@@ -4,49 +4,66 @@
              xmlns:local="clr-namespace:MauiAudioBookPlayer.ViewModel"
              xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
              xmlns:state="clr-namespace:MauiAudioBookPlayer.Model"
+             xmlns:controls="clr-namespace:MauiAudioBookPlayer.Controls"
+             x:DataType="local:BookPlayerViewModel"
              x:Class="MauiAudioBookPlayer.Views.BookPlayerPage"
              Title="Player">
-    <ContentPage.BindingContext>
-        <local:BookPlayerViewModel />
-    </ContentPage.BindingContext>
-    <VerticalStackLayout>
-        <Label HorizontalOptions="Center" Text="{Binding Book.Caption}" Margin="10,10,10,5" />
-        <ProgressBar HorizontalOptions="Fill" Progress="{Binding ReadProgress}" Margin="10,10" />
-        <Label HorizontalOptions="Center" Text="{Binding ProgressMessage}" Margin="10,0,10,15" />
+    <ContentPage.ToolbarItems>
+        <controls:SleepModeToolbarItem Text="Sleep mode" SleepModeEnabled="{Binding SleepModeEnabled}"
+                                       SleepModeEnabledImage="icon_plus.png"
+                                       SleepModeDisabledImage="icon_minus.png"
+                                       Command="{Binding ToggleSleepModeCommand}"/>
+    </ContentPage.ToolbarItems>
+    <Grid RowDefinitions="100,70,80,*">
+        <VerticalStackLayout>
+            <Label HorizontalOptions="Center" Text="{Binding Book.Caption}" Margin="10,10,10,5" />
+            <ProgressBar ProgressColor="{StaticResource White}" HorizontalOptions="Fill" Progress="{Binding ReadProgress}" Margin="10,10" />
+            <Label HorizontalOptions="Center" Text="{Binding ProgressMessage}" Margin="10,0,10,15" />
+        </VerticalStackLayout>
 
-        <Grid HorizontalOptions="CenterAndExpand" ColumnDefinitions="*,*,*">
-            <ImageButton Source="icon_step_back.png"
+        <Grid Grid.Row="1" HorizontalOptions="CenterAndExpand" ColumnDefinitions="*,*,*">
+            <ImageButton Source="icon_step_back.png" IsEnabled="{Binding ControlsEnabled}"
                          HeightRequest="48" WidthRequest="48"
+                         SemanticProperties.Description="Play previous file"
                          Command="{Binding PlayPreviousCommand}">
             </ImageButton>
-            <ImageButton Grid.Column="1"
+            <ImageButton Grid.Column="1"  IsEnabled="{Binding ControlsEnabled}"
                          HeightRequest="48" WidthRequest="48"
                          Command="{Binding TogglePlayCommand}" Margin="35,0">
                 <ImageButton.Triggers>
-                    <DataTrigger TargetType="ImageButton" Binding="{x:Binding State}"
-                                 Value="{x:Static state:EPlayerState.Stop}">
-                        <Setter Property="Source" Value="icon_stop.png" />
-                    </DataTrigger>
-                    <DataTrigger TargetType="ImageButton" Binding="{x:Binding State}"
-                                 Value="{x:Static state:EPlayerState.Pause}">
+                    <DataTrigger TargetType="ImageButton" Binding="{Binding State}"
+                                 Value="{Static state:EPlayerState.Stop}">
                         <Setter Property="Source" Value="icon_play.png" />
+                        <Setter Property="SemanticProperties.Description" Value="Play" />
                     </DataTrigger>
-                    <DataTrigger TargetType="ImageButton" Binding="{x:Binding State}"
-                                 Value="{x:Static state:EPlayerState.Play}">
+                    <DataTrigger TargetType="ImageButton" Binding="{Binding State}"
+                                 Value="{Static state:EPlayerState.Pause}">
+                        <Setter Property="Source" Value="icon_play.png" />
+                        <Setter Property="SemanticProperties.Description" Value="Play" />
+                    </DataTrigger>
+                    <DataTrigger TargetType="ImageButton" Binding="{Binding State}"
+                                 Value="{Static state:EPlayerState.Play}">
                         <Setter Property="Source" Value="icon_pause.png" />
+                        <Setter Property="SemanticProperties.Description" Value="Pause" />
                     </DataTrigger>
                 </ImageButton.Triggers>
             </ImageButton>
-            <ImageButton Grid.Column="2"
+            <ImageButton Grid.Column="2" IsEnabled="{Binding ControlsEnabled}"
                          Source="icon_step_forward.png"
                          HeightRequest="48" WidthRequest="48"
+                         SemanticProperties.Description="Play next file"
                          Command="{Binding PlayNextCommand}">
             </ImageButton>
         </Grid>
 
-        <Grid HorizontalOptions="Fill" ColumnDefinitions="*,*" RowDefinitions="*,*" Margin="10,45,10,35">
+        <Grid Grid.Row="2" HorizontalOptions="Fill" ColumnDefinitions="*,*" RowDefinitions="*,*" Margin="10,15">
+            <Grid.Triggers>
+                <DataTrigger TargetType="Grid" Binding="{Binding State}" Value="{Static state:EPlayerState.Stop}">
+                    <Setter Property="IsVisible" Value="False" />
+                </DataTrigger>
+            </Grid.Triggers>
             <Slider x:Name="FileProgressSlider" Grid.ColumnSpan="2"
-                IsEnabled="{Binding SliderVisible}"
+                SemanticProperties.Description="Scroll current file"
                 Minimum="0" Maximum="{Binding FileLength}"
                 Value="{Binding FileProgress, Mode=TwoWay}"
                 DragStartedCommand="{Binding SliderDragStartCommand}"
@@ -55,17 +72,17 @@
             <Label Grid.Row="1" Grid.Column="1" Text="{Binding TotalTime}" VerticalOptions="Center" HorizontalOptions="End" />
         </Grid>
 
-        <Grid HorizontalOptions="Fill" Margin="10,20">
-            <Image VerticalOptions="CenterAndExpand">
+        <Grid Grid.Row="3" Margin="10,20">
+            <Image VerticalOptions="Center">
                 <Image.Triggers>
                     <DataTrigger TargetType="Image" Binding="{Binding Book.HasCoverImage}" Value="True">
-                        <Setter Property="Source" Value="{Binding Book.CoverImagePath}"/>
+                        <Setter Property="Source" Value="{Binding Book.CoverImagePath}" />
                     </DataTrigger>
                     <DataTrigger TargetType="Image" Binding="{Binding Book.HasCoverImage}" Value="False">
-                        <Setter Property="Source" Value="icon_book.png"/>
+                        <Setter Property="Source" Value="icon_book.png" />
                     </DataTrigger>
                 </Image.Triggers>
             </Image>
         </Grid>
-    </VerticalStackLayout>
+    </Grid>
 </ContentPage>

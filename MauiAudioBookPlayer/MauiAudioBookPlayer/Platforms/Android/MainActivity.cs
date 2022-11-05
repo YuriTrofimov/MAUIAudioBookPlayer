@@ -49,7 +49,6 @@ public class MainActivity : MauiAppCompatActivity, IAudioActivity
 	protected override void OnCreate(Bundle savedInstanceState)
 	{
 		base.OnCreate(savedInstanceState);
-
 		instance = this;
 
 		if (IsPermissionRequired())

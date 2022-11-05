@@ -12,8 +12,7 @@
         Route="library" />
 
     <ShellContent
-        Title="Scan"
+        Title="Scan folders"
         ContentTemplate="{DataTemplate local:ManageScanFolders}"
         Route="scan" />
-
 </Shell>
