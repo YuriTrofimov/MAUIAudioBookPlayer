@@ -16,6 +16,7 @@ public partial class AppShell : Shell
 	public AppShell()
 	{
 		InitializeComponent();
+		Routing.RegisterRoute("settings", typeof(SettingsPage));
 		Routing.RegisterRoute("scan", typeof(ManageScanFolders));
 		Routing.RegisterRoute("scan/explorer", typeof(SelectFolderPage));
 		Routing.RegisterRoute("library", typeof(LibraryPage));

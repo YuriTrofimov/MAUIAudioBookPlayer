@@ -2,6 +2,7 @@
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using AudioBookPlayer.Core.Model;
 using AudioBookPlayer.Core.Model.Entities;
 using CommunityToolkit.Mvvm.ComponentModel;
@@ -22,6 +23,7 @@ namespace MauiAudioBookPlayer.ViewModel
 		private readonly IAppDataRepository repository;
 		private readonly INativeAudioService audioService;
 		private readonly IMessageBoxService messageBoxService;
+		private readonly SettingsViewModel settingsViewModel;
 		private readonly CancellationTokenSource timerToken;
 
 		/// <summary>
@@ -80,6 +82,9 @@ namespace MauiAudioBookPlayer.ViewModel
 		[ObservableProperty]
 		private int maxInactivityMinutes;
 
+		[ObservableProperty]
+		private string sleepTimeLeft;
+
 		/// <summary>
 		/// Initializes a new instance of the <see cref="BookPlayerViewModel"/> class.
 		/// </summary>
@@ -87,10 +92,15 @@ namespace MauiAudioBookPlayer.ViewModel
 		{
 			repository = Ioc.Default.GetService<IAppDataRepository>();
 			audioService = Ioc.Default.GetService<INativeAudioService>();
+			audioService.PlayEnded += AudioService_PlayEnded;
+
 			messageBoxService = Ioc.Default.GetService<IMessageBoxService>();
+			settingsViewModel = Ioc.Default.GetService<SettingsViewModel>();
+			settingsViewModel.PropertyChanged += SettingsViewModel_PropertyChanged;
+
 			files = new ObservableCollection<BookFile>();
 			timerToken = new CancellationTokenSource();
-			audioService.PlayEnded += AudioService_PlayEnded;
+
 			State = EPlayerState.Stop;
 			maxInactivityMinutes = 10;
 			TimerTask();
@@ -113,6 +123,10 @@ namespace MauiAudioBookPlayer.ViewModel
 
 			await StopAsync();
 			await ReloadFilesAsync();
+
+			SleepModeEnabled = settingsViewModel.SleepTimerEnabled;
+			MaxInactivityMinutes = settingsViewModel.SleepTimerPeriod;
+
 			var progress = await BookProgress.LoadAsync(Book.FolderPath);
 
 			void Init()
@@ -366,7 +380,7 @@ namespace MauiAudioBookPlayer.ViewModel
 
 		private async Task UpdateProgress()
 		{
-			if (SleepModeEnabled && (DateTime.Now - lastActivityTime).TotalSeconds > maxInactivityMinutes)
+			if (SleepModeEnabled && (DateTime.Now - lastActivityTime).TotalSeconds > MaxInactivityMinutes)
 			{
 				if (audioService.Volume > 0.2f)
 				{
@@ -384,6 +398,10 @@ namespace MauiAudioBookPlayer.ViewModel
 		partial void OnFileProgressChanged(double value)
 		{
 			TimeProgress = TimeSpan.FromSeconds(value).ToFormattedTime();
+
+			var maxSeconds = TimeSpan.FromMinutes(MaxInactivityMinutes).TotalSeconds;
+			var playedSeconds = (DateTime.Now - lastActivityTime).TotalSeconds;
+			SleepTimeLeft = TimeSpan.FromSeconds(maxSeconds - playedSeconds).ToFormattedTime();
 		}
 
 		partial void OnFileLengthChanged(double value)
@@ -402,6 +420,11 @@ namespace MauiAudioBookPlayer.ViewModel
 			await InitAudioFile();
 		}
 
+		partial void OnSleepModeEnabledChanged(bool value)
+		{
+			lastActivityTime = DateTime.Now;
+		}
+
 		private void AudioService_PlayEnded(object sender, EventArgs e)
 		{
 			PlayNext();
@@ -410,6 +433,12 @@ namespace MauiAudioBookPlayer.ViewModel
 		private async Task DisplayError(Exception ex)
 		{
 			await messageBoxService.ShowMessageBoxAsync("Error", ex.Message);
+		}
+
+		private void SettingsViewModel_PropertyChanged(object sender, PropertyChangedEventArgs e)
+		{
+			SleepModeEnabled = settingsViewModel.SleepTimerEnabled;
+			MaxInactivityMinutes = settingsViewModel.SleepTimerPeriod;
 		}
 	}
 }

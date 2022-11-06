@@ -10,8 +10,8 @@
              Title="Player">
     <ContentPage.ToolbarItems>
         <controls:SleepModeToolbarItem Text="Sleep mode" SleepModeEnabled="{Binding SleepModeEnabled}"
-                                       SleepModeEnabledImage="icon_plus.png"
-                                       SleepModeDisabledImage="icon_minus.png"
+                                       SleepModeEnabledImage="icon_stopwatch.png"
+                                       SleepModeDisabledImage="icon_stopwatch_on.png"
                                        Command="{Binding ToggleSleepModeCommand}"/>
     </ContentPage.ToolbarItems>
     <Grid RowDefinitions="100,70,80,*">
@@ -69,6 +69,9 @@
                 DragStartedCommand="{Binding SliderDragStartCommand}"
                 DragCompletedCommand="{Binding SliderDragStopCommand}" />
             <Label Grid.Row="1" Text="{Binding TimeProgress}" VerticalOptions="Center" HorizontalOptions="Start" />
+            <Label Grid.Row="1" IsVisible="{Binding SleepModeEnabled}" 
+                   Text="{Binding SleepTimeLeft, StringFormat='Sleep in: {0}'}" 
+                   VerticalOptions="Center" HorizontalOptions="Center" />
             <Label Grid.Row="1" Grid.Column="1" Text="{Binding TotalTime}" VerticalOptions="Center" HorizontalOptions="End" />
         </Grid>
 

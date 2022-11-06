@@ -5,14 +5,34 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:local="clr-namespace:MauiAudioBookPlayer.Views"
     Shell.FlyoutBehavior="Flyout">
+    <Shell.ItemTemplate>
+        <DataTemplate>
+            <HorizontalStackLayout Padding="15,5,10,0">
+                <Image Source="{Binding FlyoutIcon}" HeightRequest="48" 
+                       VerticalOptions="Center" HorizontalOptions="Start" />
+                <Label Text="{Binding Title}" Style="{StaticResource MenuCaption}" 
+                       Margin="15,0,0,0" VerticalOptions="Center" />
+            </HorizontalStackLayout>
+            <!--<Grid ColumnDefinitions="0.2*,0.8*" Padding="10">
+                <Image Source="{Binding FlyoutIcon}" HeightRequest="48" VerticalOptions="Center" />
+                <Label Grid.Column="1" Text="1234" TextColor="Black" VerticalTextAlignment="Center" />
+            </Grid>-->
+        </DataTemplate>
+    </Shell.ItemTemplate>
 
-    <ShellContent
-        Title="Library"
-        ContentTemplate="{DataTemplate local:LibraryPage}"
-        Route="library" />
-
-    <ShellContent
-        Title="Scan folders"
-        ContentTemplate="{DataTemplate local:ManageScanFolders}"
-        Route="scan" />
+    <FlyoutItem Title="Library" Icon="icon_books.png">
+        <Tab>
+            <ShellContent ContentTemplate="{DataTemplate local:LibraryPage}" Route="library" />
+        </Tab>
+    </FlyoutItem>
+    <FlyoutItem Title="Scan folders" Icon="icon_search.png">
+        <Tab>
+            <ShellContent ContentTemplate="{DataTemplate local:ManageScanFolders}" Route="scan" />
+        </Tab>
+    </FlyoutItem>
+    <FlyoutItem Title="Settings" Icon="icon_settings.png">
+        <Tab>
+            <ShellContent ContentTemplate="{DataTemplate local:SettingsPage}" Route="settings" />
+        </Tab>
+    </FlyoutItem>
 </Shell>
