@@ -8,17 +8,19 @@
     <Shell.ItemTemplate>
         <DataTemplate>
             <HorizontalStackLayout Padding="15,5,10,0">
-                <Image Source="{Binding FlyoutIcon}" HeightRequest="48" 
+                <Image Source="{Binding FlyoutIcon}" HeightRequest="48"
                        VerticalOptions="Center" HorizontalOptions="Start" />
-                <Label Text="{Binding Title}" Style="{StaticResource MenuCaption}" 
+                <Label Text="{Binding Title}" Style="{StaticResource MenuCaption}"
                        Margin="15,0,0,0" VerticalOptions="Center" />
             </HorizontalStackLayout>
-            <!--<Grid ColumnDefinitions="0.2*,0.8*" Padding="10">
-                <Image Source="{Binding FlyoutIcon}" HeightRequest="48" VerticalOptions="Center" />
-                <Label Grid.Column="1" Text="1234" TextColor="Black" VerticalTextAlignment="Center" />
-            </Grid>-->
         </DataTemplate>
     </Shell.ItemTemplate>
+
+    <Shell.FlyoutHeader>
+        <Label Margin="15" HorizontalTextAlignment="Center" VerticalTextAlignment="Center"
+               Style="{StaticResource AppCaption}"
+               Text="Audio book player" />
+    </Shell.FlyoutHeader>
 
     <FlyoutItem Title="Library" Icon="icon_books.png">
         <Tab>
@@ -35,4 +37,10 @@
             <ShellContent ContentTemplate="{DataTemplate local:SettingsPage}" Route="settings" />
         </Tab>
     </FlyoutItem>
+
+    <Shell.FlyoutFooter>
+        <Label Margin="15" HorizontalTextAlignment="Center" VerticalTextAlignment="Center"
+               Style="{StaticResource AppFooter}"
+               Text="Created by Yuri Trofimov" />
+    </Shell.FlyoutFooter>
 </Shell>
