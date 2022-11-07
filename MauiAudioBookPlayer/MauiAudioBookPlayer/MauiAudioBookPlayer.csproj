@@ -64,6 +64,7 @@
 	<ItemGroup>
 		<PackageReference Include="CommunityToolkit.Maui" Version="1.3.0" />
 		<PackageReference Include="CommunityToolkit.Mvvm" Version="8.0.0" />
+		<PackageReference Include="Microsoft.Extensions.Localization" Version="6.0.10" />
 		<PackageReference Include="Plugin.MauiAudio" Version="1.0.7" />
 		<PackageReference Include="StyleCop.Analyzers" Version="1.2.0-beta.435">
 		  <PrivateAssets>all</PrivateAssets>
@@ -95,6 +96,21 @@
 
 	<ItemGroup>
 		<AdditionalFiles Include="stylecop.json" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Compile Update="Resources\Strings\LocalizableStrings.Designer.cs">
+	    <DesignTime>True</DesignTime>
+	    <AutoGen>True</AutoGen>
+	    <DependentUpon>LocalizableStrings.resx</DependentUpon>
+	  </Compile>
+	</ItemGroup>
+
+	<ItemGroup>
+	  <EmbeddedResource Update="Resources\Strings\LocalizableStrings.resx">
+	    <Generator>PublicResXFileCodeGenerator</Generator>
+	    <LastGenOutput>LocalizableStrings.Designer.cs</LastGenOutput>
+	  </EmbeddedResource>
 	</ItemGroup>
 
 </Project>

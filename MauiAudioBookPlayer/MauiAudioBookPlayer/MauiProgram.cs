@@ -61,6 +61,7 @@ public static class MauiProgram
 		builder.Services.AddSingleton<IMessageBoxService, MessageBoxService>();
 		builder.Services.AddSingleton<INavigationService, NavigationService>();
 		builder.Services.AddSingleton<ISettingsService, SettingsService>();
+		builder.Services.AddLocalization();
 
 		builder.Services.AddTransient<ScanFolderViewModel>();
 		builder.Services.AddTransient<ExplorerViewModel>();

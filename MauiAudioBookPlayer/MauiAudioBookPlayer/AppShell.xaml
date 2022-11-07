@@ -4,6 +4,7 @@
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:local="clr-namespace:MauiAudioBookPlayer.Views"
+    xmlns:res="clr-namespace:MauiAudioBookPlayer.Resources.Strings"
     Shell.FlyoutBehavior="Flyout">
     <Shell.ItemTemplate>
         <DataTemplate>
@@ -19,20 +20,20 @@
     <Shell.FlyoutHeader>
         <Label Margin="15" HorizontalTextAlignment="Center" VerticalTextAlignment="Center"
                Style="{StaticResource AppCaption}"
-               Text="Audio book player" />
+               Text="{x:Static res:LocalizableStrings.AppCaption}" />
     </Shell.FlyoutHeader>
 
-    <FlyoutItem Title="Library" Icon="icon_books.png">
+    <FlyoutItem Title="{x:Static res:LocalizableStrings.Menu_Library}" Icon="icon_books.png">
         <Tab>
             <ShellContent ContentTemplate="{DataTemplate local:LibraryPage}" Route="library" />
         </Tab>
     </FlyoutItem>
-    <FlyoutItem Title="Scan folders" Icon="icon_search.png">
+    <FlyoutItem Title="{x:Static res:LocalizableStrings.Menu_Scan}" Icon="icon_search.png">
         <Tab>
             <ShellContent ContentTemplate="{DataTemplate local:ManageScanFolders}" Route="scan" />
         </Tab>
     </FlyoutItem>
-    <FlyoutItem Title="Settings" Icon="icon_settings.png">
+    <FlyoutItem Title="{x:Static res:LocalizableStrings.Menu_Settings}" Icon="icon_settings.png">
         <Tab>
             <ShellContent ContentTemplate="{DataTemplate local:SettingsPage}" Route="settings" />
         </Tab>
@@ -41,6 +42,6 @@
     <Shell.FlyoutFooter>
         <Label Margin="15" HorizontalTextAlignment="Center" VerticalTextAlignment="Center"
                Style="{StaticResource AppFooter}"
-               Text="Created by Yuri Trofimov" />
+               Text="{x:Static res:LocalizableStrings.AppFooter}" />
     </Shell.FlyoutFooter>
 </Shell>

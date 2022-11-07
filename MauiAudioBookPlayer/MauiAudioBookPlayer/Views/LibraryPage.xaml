@@ -3,8 +3,9 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:local="clr-namespace:MauiAudioBookPlayer.ViewModel"
              xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+             xmlns:res="clr-namespace:MauiAudioBookPlayer.Resources.Strings"
              x:Class="MauiAudioBookPlayer.Views.LibraryPage"
-             Title="Library">
+             Title="{x:Static res:LocalizableStrings.Menu_Library}">
     <ScrollView Padding="5">
         <StackLayout>
             <CollectionView x:Name="BookList" ItemsSource="{Binding Books}" IsEnabled="{Binding ControlsEnabled}"

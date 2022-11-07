@@ -3,27 +3,34 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
              xmlns:viewmodel="clr-namespace:MauiAudioBookPlayer.ViewModel"
-             x:Class="MauiAudioBookPlayer.Views.SelectFolderPage">
+             xmlns:res="clr-namespace:MauiAudioBookPlayer.Resources.Strings"
+             x:Class="MauiAudioBookPlayer.Views.SelectFolderPage"
+             Title="{x:Static res:LocalizableStrings.SelectScanFolder}">
 
     <ScrollView Margin="20" VerticalScrollBarVisibility="Always">
-        <StackLayout Margin="5" Spacing="20">
-            <Label Text="Select folder please" />
-            <Label Text="{Binding CurrentPath}" />
-            <Button x:Name="CloseButton" Text="Close" Clicked="CloseButton_Clicked" />
-
-            <Button x:Name="PreviousButton"
+        <VerticalStackLayout Margin="5" Spacing="20">
+            <Label Margin="15,5" Style="{StaticResource FolderCaption}" Text="{Binding CurrentPath}" />
+            <Grid ColumnDefinitions="*,*">
+                <Button x:Name="PreviousButton" Margin="15,5" ImageSource="icon_previous_folder.png"
                 Text="Previous folder"
                 IsVisible="{Binding CanReturn}"
                 Command="{Binding SelectFolderCommand}"
                 CommandParameter="{Binding PreviousPath}" />
-            <CollectionView ItemsSource="{Binding Folders}">
+
+                <Button Grid.Column="1" x:Name="CloseButton" Margin="15,5" Text="{x:Static res:LocalizableStrings.Confirm}" 
+                        Clicked="CloseButton_Clicked" />
+            </Grid>
+
+            <CollectionView ItemsSource="{Binding Folders}" 
+                            SelectionMode="Single" 
+                            SelectedItem="{Binding SelectedFolder}">
                 <CollectionView.ItemTemplate>
                     <DataTemplate>
-                        <HorizontalStackLayout BackgroundColor="Yellow">
-                            <Label Text="{Binding Name}" />
-                            <Button Text="Select"
-                                Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodel:ExplorerViewModel}}, Path=SelectFolderCommand}"
-                                CommandParameter="{Binding Path}" />
+                        <HorizontalStackLayout Margin="15" >
+                            <Image HeightRequest="36" Source="icon_folder.png"/>
+                            <Label Margin="35,0,0,0" Style="{StaticResource FolderCaption}" 
+                                   VerticalTextAlignment="Center"
+                                   Text="{Binding Name}" />
                         </HorizontalStackLayout>
                     </DataTemplate>
                 </CollectionView.ItemTemplate>
@@ -37,6 +44,6 @@
                     </DataTemplate>
                 </CollectionView.ItemTemplate>
             </CollectionView>
-        </StackLayout>
+        </VerticalStackLayout>
     </ScrollView>
 </ContentPage>

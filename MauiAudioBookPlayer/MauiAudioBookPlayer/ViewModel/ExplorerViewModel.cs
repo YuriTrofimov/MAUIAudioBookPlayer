@@ -31,6 +31,9 @@ namespace MauiAudioBookPlayer.ViewModel
 		[ObservableProperty]
 		private string previousPath;
 
+		[ObservableProperty]
+		private FolderItem selectedFolder;
+
 		/// <summary>
 		/// Initializes a new instance of the <see cref="ExplorerViewModel"/> class.
 		/// </summary>
@@ -97,6 +100,16 @@ namespace MauiAudioBookPlayer.ViewModel
 		private void ConfirmPath()
 		{
 			OnPathConfirmed?.Invoke(this, new EventArgs());
+		}
+
+		partial void OnSelectedFolderChanged(FolderItem value)
+		{
+			if (value == null)
+			{
+				return;
+			}
+
+			SelectFolder(value.Path);
 		}
 	}
 }
