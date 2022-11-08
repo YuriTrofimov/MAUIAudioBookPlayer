@@ -12,7 +12,7 @@
             <Label Margin="15,5" Style="{StaticResource FolderCaption}" Text="{Binding CurrentPath}" />
             <Grid ColumnDefinitions="*,*">
                 <Button x:Name="PreviousButton" Margin="15,5" ImageSource="icon_previous_folder.png"
-                Text="Previous folder"
+                Text="{x:Static res:LocalizableStrings.PreviousFolder}"
                 IsVisible="{Binding CanReturn}"
                 Command="{Binding SelectFolderCommand}"
                 CommandParameter="{Binding PreviousPath}" />

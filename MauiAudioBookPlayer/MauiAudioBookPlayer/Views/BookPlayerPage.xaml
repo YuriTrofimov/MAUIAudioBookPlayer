@@ -6,8 +6,7 @@
              xmlns:state="clr-namespace:MauiAudioBookPlayer.Model"
              xmlns:controls="clr-namespace:MauiAudioBookPlayer.Controls"
              x:DataType="local:BookPlayerViewModel"
-             x:Class="MauiAudioBookPlayer.Views.BookPlayerPage"
-             Title="Player">
+             x:Class="MauiAudioBookPlayer.Views.BookPlayerPage">
     <ContentPage.ToolbarItems>
         <controls:SleepModeToolbarItem Text="Sleep mode" SleepModeEnabled="{Binding SleepModeEnabled}"
                                        SleepModeEnabledImage="icon_stopwatch.png"

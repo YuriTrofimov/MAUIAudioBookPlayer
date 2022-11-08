@@ -8,8 +8,8 @@
 
     <Grid RowDefinitions="80,*,80" VerticalOptions="Fill">
         <VerticalStackLayout HorizontalOptions="Fill">
-            <Button Text="Add scan folder" Command="{Binding SelectNewScanFolderCommand}" Margin="10,5" />
-            <Button Text="Scan" Command="{Binding ScanCommand}" Margin="10,5" />
+            <Button Text="{x:Static res:LocalizableStrings.AddScanFolder}" Command="{Binding SelectNewScanFolderCommand}" Margin="10,5" />
+            <Button Text="{x:Static res:LocalizableStrings.Scan}" Command="{Binding ScanCommand}" Margin="10,5" />
         </VerticalStackLayout>
         <CollectionView Grid.Row="1" ItemsSource="{Binding Folders}" SelectedItem="{Binding SelectedFolder}" 
                         SelectionMode="Single" Margin="10,20">
@@ -22,6 +22,6 @@
             </CollectionView.ItemTemplate>
         </CollectionView>
         <Button Grid.Row="2" Margin="10,5" IsVisible="{Binding CanDelete}" Command="{Binding DeleteCommand}" 
-                Text="Remove selected folder" />
+                Text="{x:Static res:LocalizableStrings.Remove}" />
     </Grid>
 </ContentPage>

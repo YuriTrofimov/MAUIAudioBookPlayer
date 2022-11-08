@@ -117,6 +117,9 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="AddScanFolder" xml:space="preserve">
+    <value>Добавить папку сканирования</value>
+  </data>
   <data name="AppCaption" xml:space="preserve">
     <value>Проигрыватель аудиокниг</value>
   </data>
@@ -126,6 +129,12 @@
   <data name="Confirm" xml:space="preserve">
     <value>Подтвердить</value>
   </data>
+  <data name="Field_SleepTimerEnabled" xml:space="preserve">
+    <value>Таймер сна</value>
+  </data>
+  <data name="Field_SleepTimerPeriod" xml:space="preserve">
+    <value>Задержка таймера сна: {0:G} минут</value>
+  </data>
   <data name="Menu_Library" xml:space="preserve">
     <value>Библиотека</value>
   </data>
@@ -134,6 +143,15 @@
   </data>
   <data name="Menu_Settings" xml:space="preserve">
     <value>Настройки</value>
+  </data>
+  <data name="PreviousFolder" xml:space="preserve">
+    <value>Предыдущая папка</value>
+  </data>
+  <data name="Remove" xml:space="preserve">
+    <value>Удалить из списка</value>
+  </data>
+  <data name="Scan" xml:space="preserve">
+    <value>Сканировать</value>
   </data>
   <data name="SelectScanFolder" xml:space="preserve">
     <value>Выберите папку сканирования</value>

@@ -61,6 +61,15 @@ namespace MauiAudioBookPlayer.Resources.Strings {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Add scan folder.
+        /// </summary>
+        public static string AddScanFolder {
+            get {
+                return ResourceManager.GetString("AddScanFolder", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Audio book player.
         /// </summary>
         public static string AppCaption {
@@ -88,6 +97,24 @@ namespace MauiAudioBookPlayer.Resources.Strings {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Sleep timer enabled.
+        /// </summary>
+        public static string Field_SleepTimerEnabled {
+            get {
+                return ResourceManager.GetString("Field_SleepTimerEnabled", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Sleep timer period: {0:G} minutes.
+        /// </summary>
+        public static string Field_SleepTimerPeriod {
+            get {
+                return ResourceManager.GetString("Field_SleepTimerPeriod", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Library.
         /// </summary>
         public static string Menu_Library {
@@ -111,6 +138,33 @@ namespace MauiAudioBookPlayer.Resources.Strings {
         public static string Menu_Settings {
             get {
                 return ResourceManager.GetString("Menu_Settings", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Previous folder.
+        /// </summary>
+        public static string PreviousFolder {
+            get {
+                return ResourceManager.GetString("PreviousFolder", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Remove from list.
+        /// </summary>
+        public static string Remove {
+            get {
+                return ResourceManager.GetString("Remove", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Scan.
+        /// </summary>
+        public static string Scan {
+            get {
+                return ResourceManager.GetString("Scan", resourceCulture);
             }
         }
         

@@ -8,13 +8,13 @@
              Title="{x:Static res:LocalizableStrings.Menu_Settings}">
 
     <Grid Padding="15,15" HorizontalOptions="Fill" ColumnDefinitions="*,3*" RowDefinitions="auto,auto">
-        <Label Text="Sleep timer enabled" VerticalOptions="Center" HorizontalOptions="Start" />
+        <Label Text="{x:Static res:LocalizableStrings.Field_SleepTimerEnabled}" VerticalOptions="Center" HorizontalOptions="Start" />
         <Switch Grid.Column="1" IsToggled="{Binding SleepTimerEnabled}" HorizontalOptions="End" />
 
         <Label Grid.Row="1" Text="{Binding
             Source={Reference SleepTimerStepper},
             Path=Value,
-            StringFormat='Sleep timer period: {0:G} minutes'}"
+            StringFormat={x:Static res:LocalizableStrings.Field_SleepTimerPeriod}}"
                VerticalOptions="Center" HorizontalOptions="Start" />
         <Stepper x:Name="SleepTimerStepper" Grid.Row="1" Grid.Column="1" Value="{Binding SleepTimerPeriod}" IsEnabled="{Binding SleepTimerEnabled}" Minimum="5" Maximum="90" Increment="5" VerticalOptions="Center" HorizontalOptions="End" />
     </Grid>
