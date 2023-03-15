@@ -9,3 +9,5 @@ An audiobook is a collection of audio files arranged in folders. Very often, the
 <li>/ScanFolder/file.mp3 -- Single file book.</li>
 </ol>
 </p>
+<p>The progress of listening to an audiobook is saved in the file progress.dat located in the folder with the audiobook.</p>
+<p>The main logic of the player is implemented in the BookPlayerViewModel class. A very important feature of the player is sleep mode. This is very important if you accidentally fall asleep while listening to your favorite book in bed.</p>
